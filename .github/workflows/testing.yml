@@ -1,0 +1,67 @@
+name: testing
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+    branches:
+      - "master"
+    
+jobs:
+  misspell:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[release] ')"
+    steps:
+    - 
+      name: Checkout
+      uses: actions/checkout@v2
+    - 
+      name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+    - 
+      name: Install misspell
+      run: |
+        go get -u github.com/client9/misspell/cmd/misspell
+        
+    - 
+      name: execute misspell
+      run: |
+        misspell .
+        
+  build:
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[release] ')"
+    steps:
+    - 
+      name: Checkout
+      uses: actions/checkout@v2
+    - 
+      name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+    - 
+      name: Build package
+      run: |
+        go build -v ./...
+        
+  test:
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '[release] ')"
+    steps:
+    - 
+      name: Checkout
+      uses: actions/checkout@v2
+    - 
+      name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+    - 
+      name: Test package
+      run: |
+        go test -v ./...
