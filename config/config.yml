@@ -1,0 +1,4 @@
+---
+registration: true
+database:
+  debug: false

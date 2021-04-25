@@ -1,0 +1,138 @@
+basePath: /api/v1
+definitions:
+  types.AddUser:
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - name
+    - password
+    type: object
+  types.Entry:
+    properties:
+      diff:
+        type: number
+    type: object
+  types.SL:
+    properties:
+      diff:
+        type: number
+    type: object
+  types.Strategy:
+    properties:
+      entires:
+        items:
+          $ref: '#/definitions/types.Entry'
+        type: array
+      sl:
+        $ref: '#/definitions/types.SL'
+      tps:
+        items:
+          $ref: '#/definitions/types.TP'
+        type: array
+    type: object
+  types.TP:
+    properties:
+      diff:
+        type: number
+    type: object
+  utils.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: error
+        type: string
+    type: object
+host: https://yourforwarder.io
+info:
+  contact: {}
+  license:
+    name: MIT
+    url: https://github.com/gibigo/cornix-tv-channel/blob/master/LICENSE
+  title: Cornix-TV-Channel API
+  version: "1.0"
+paths:
+  /users:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BasicAuth: []
+      summary: Delete the current user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Get all strategies of the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Strategy'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BasicAuth: []
+      summary: Get all strategies
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: User to create
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/types.AddUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      summary: Create a user
+      tags:
+      - users
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
