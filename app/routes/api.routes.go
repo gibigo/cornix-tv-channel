@@ -19,6 +19,7 @@ func registerUsers(api fiber.Router) {
 	users.Post("/", s.CreateUser)
 	users.Use(middleware.BasicAuth).Get("/", s.GetUser)
 	users.Use(middleware.BasicAuth).Delete("/", s.DeleteUser)
+	users.Use(middleware.BasicAuth).Put("/", s.UpdateUser)
 }
 
 func registerStrategies(api fiber.Router) {

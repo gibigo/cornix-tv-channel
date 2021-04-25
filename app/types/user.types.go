@@ -7,7 +7,7 @@ type AddUser struct {
 
 type UpdateUser struct {
 	Name     string `json:"name"`
-	Password string `json:"password" validate:"password"`
+	Password string `json:"password"`
 }
 
 type UserResponse struct {

@@ -1,5 +1,7 @@
 package types
 
+import "github.com/gibigo/cornix-tv-channel/app/dal"
+
 type Channel struct {
 	ID       int64     `json:"id"`
 	UserName string    `json:"user"`
@@ -27,4 +29,12 @@ type Strategy struct {
 	Entries      []*Entry `json:"entires"`
 	TPs          []*TP    `json:"tps"`
 	SL           *SL      `json:"sl"`
+}
+
+// for swagger docs
+type AddStrategy struct {
+	AllowCounter bool         `json:"allowCounter"`
+	Entries      []*dal.Entry `json:"entires"`
+	TPs          []*dal.TP    `json:"tps"`
+	SL           *dal.SL      `json:"sl"`
 }

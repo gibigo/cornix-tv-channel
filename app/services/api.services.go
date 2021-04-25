@@ -47,6 +47,8 @@ func CreateUser(c *fiber.Ctx) error {
 		return err
 	}
 
+	// TODO check for registration var
+
 	result := dal.FindUserByName(&dal.User{}, u.Name)
 	if !errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		if result.RowsAffected > 0 {
@@ -86,6 +88,38 @@ func DeleteUser(c *fiber.Ctx) error {
 		return err
 	}
 	return nil
+
+}
+
+// @Summary Change the current users setting
+// @Description Change the current users setting
+// @Security BasicAuth
+// @Tags users
+// @Accept  json
+// @Produce  json
+// @Success 200 {string} string
+// @Failure 400 {object} utils.HTTPError
+// @Failure 401 {string} string
+// @Router /users [put]
+func UpdateUser(c *fiber.Ctx) error {
+	var userUpdate types.UpdateUser
+	if err := utils.ParseBodyAndValidate(c, &userUpdate); err != nil {
+		return err
+	}
+
+	if len(userUpdate.Name) == 0 && len(userUpdate.Password) > 0 {
+		username := fmt.Sprint(c.Locals("username"))
+		if err := dal.ChangeUserPassword(username, userUpdate.Password).Error; err != nil {
+			utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
+			return err
+		}
+	}
+
+	/* if err := dal.DeleteUser(c.Locals("username")).Error; err != nil {
+		utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
+		return err
+	} */
+	return c.JSON(userUpdate)
 
 }
 
@@ -152,6 +186,7 @@ func GetStrategies(c *fiber.Ctx) error {
 // @Tags strategies
 // @Accept  json
 // @Produce  json
+// @Param user body types.AddStrategy true "Strategy to create"
 // @Success 200 {object} types.Strategy
 // @Failure 400 {object} utils.HTTPError
 // @Failure 401 {string} string

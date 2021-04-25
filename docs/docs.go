@@ -93,11 +93,22 @@ var doc = `{
                     "strategies"
                 ],
                 "summary": "Create a new strategy",
+                "parameters": [
+                    {
+                        "description": "Strategy to create",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.AddUser"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.Strategy"
+                            "$ref": "#/definitions/types.AddStrategy"
                         }
                     },
                     "400": {
@@ -233,6 +244,29 @@ var doc = `{
         }
     },
     "definitions": {
+        "types.AddStrategy": {
+            "type": "object",
+            "properties": {
+                "allowCounter": {
+                    "type": "boolean"
+                },
+                "entires": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Entry"
+                    }
+                },
+                "sl": {
+                    "$ref": "#/definitions/types.SL"
+                },
+                "tps": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.TP"
+                    }
+                }
+            }
+        },
         "types.AddUser": {
             "type": "object",
             "required": [

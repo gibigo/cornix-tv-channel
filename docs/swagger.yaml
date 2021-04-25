@@ -1,5 +1,20 @@
 basePath: /api/v1
 definitions:
+  types.AddStrategy:
+    properties:
+      allowCounter:
+        type: boolean
+      entires:
+        items:
+          $ref: '#/definitions/types.Entry'
+        type: array
+      sl:
+        $ref: '#/definitions/types.SL'
+      tps:
+        items:
+          $ref: '#/definitions/types.TP'
+        type: array
+    type: object
   types.AddUser:
     properties:
       name:
@@ -101,13 +116,20 @@ paths:
       consumes:
       - application/json
       description: Create a new strategy for the current user
+      parameters:
+      - description: Strategy to create
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/types.AddUser'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.Strategy'
+            $ref: '#/definitions/types.AddStrategy'
         "400":
           description: Bad Request
           schema:

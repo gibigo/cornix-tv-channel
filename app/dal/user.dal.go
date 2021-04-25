@@ -1,7 +1,10 @@
 package dal
 
 import (
+	"fmt"
+
 	"github.com/gibigo/cornix-tv-channel/config/database"
+	"github.com/gibigo/cornix-tv-channel/utils/password"
 	"gorm.io/gorm"
 )
 
@@ -26,4 +29,13 @@ func CreateUser(user *User) *gorm.DB {
 
 func DeleteUser(username interface{}) *gorm.DB {
 	return database.DB.Where("name = ?", username).Delete(&User{})
+}
+
+func ChangeUserPassword(username, pwd string) *gorm.DB {
+	return UpdateUser(&User{}, map[string]interface{}{"password": password.Generate(pwd)}, username)
+}
+
+func UpdateUser(dest interface{}, update map[string]interface{}, user string) *gorm.DB {
+	fmt.Println(update)
+	return database.DB.Model(dest).Where("name = ?", user).Updates(update)
 }
