@@ -28,7 +28,7 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/users": {
+        "/strategies": {
             "get": {
                 "security": [
                     {
@@ -43,7 +43,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "strategies"
                 ],
                 "summary": "Get all strategies",
                 "responses": {
@@ -54,6 +54,90 @@ var doc = `{
                             "items": {
                                 "$ref": "#/definitions/types.Strategy"
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create a new strategy for the current user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "strategies"
+                ],
+                "summary": "Create a new strategy",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Strategy"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get the current user, can be used to verify the user exists",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get the current user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
                         }
                     },
                     "401": {
@@ -169,6 +253,9 @@ var doc = `{
             "properties": {
                 "diff": {
                     "type": "number"
+                },
+                "strategyID": {
+                    "type": "integer"
                 }
             }
         },
@@ -177,17 +264,26 @@ var doc = `{
             "properties": {
                 "diff": {
                     "type": "number"
+                },
+                "strategyID": {
+                    "type": "integer"
                 }
             }
         },
         "types.Strategy": {
             "type": "object",
             "properties": {
+                "allowCounter": {
+                    "type": "boolean"
+                },
                 "entires": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/types.Entry"
                     }
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "sl": {
                     "$ref": "#/definitions/types.SL"
@@ -205,6 +301,9 @@ var doc = `{
             "properties": {
                 "diff": {
                     "type": "number"
+                },
+                "strategyID": {
+                    "type": "integer"
                 }
             }
         },

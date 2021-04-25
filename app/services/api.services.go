@@ -12,7 +12,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// GetUser godoc
 // @Summary Get the current user
 // @Description Get the current user, can be used to verify the user exists
 // @Security BasicAuth
@@ -32,7 +31,6 @@ func GetUser(c *fiber.Ctx) error {
 	return nil
 }
 
-// CreateUser godoc
 // @Summary Create a user
 // @Description Create a new user
 // @Tags users
@@ -72,7 +70,6 @@ func CreateUser(c *fiber.Ctx) error {
 	return nil
 }
 
-// DeleteUser godoc
 // @Summary Delete the current user
 // @Description Delete the current user
 // @Security BasicAuth
@@ -92,44 +89,115 @@ func DeleteUser(c *fiber.Ctx) error {
 
 }
 
-// GetUser godoc
 // @Summary Get all strategies
 // @Description Get all strategies of the current user
 // @Security BasicAuth
-// @Tags users
+// @Tags strategies
 // @Accept  json
 // @Produce  json
 // @Success 200 {array} types.Strategy
+// @Failure 400 {object} utils.HTTPError
 // @Failure 401 {string} string
-// @Router /users [get]
+// @Failure 404 {object} utils.HTTPError
+// @Router /strategies [get]
 func GetStrategies(c *fiber.Ctx) error {
-	var strategies []types.Strategy
-	if err := dal.FindAllStrategiesFromUser(&strategies, c.Locals("username")).Error; err != nil {
+	result := dal.FindAllStrategiesFromUser(nil, c.Locals("username"))
+	if result.Error != nil {
+		utils.NewHTTPError(c, fiber.StatusInternalServerError, result.Error)
+		return nil
+	}
+
+	rows, err := result.Rows()
+	if err != nil {
 		utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
 		return nil
 	}
+	defer rows.Close()
+
+	strategies := make([]*types.Strategy, 0)
+	var indx int64
+
+	for rows.Next() {
+		tmpStrategy := &types.Strategy{}
+		entries := &types.Entry{}
+		tps := &types.TP{}
+		sl := &types.SL{}
+		err := rows.Scan(&tmpStrategy.ID, &tmpStrategy.AllowCounter, &entries.Diff, &tps.Diff, &sl.Diff)
+		if err != nil {
+			utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
+			return nil
+		}
+		if len(strategies) < int(tmpStrategy.ID) {
+			strategies = append(strategies, tmpStrategy)
+			indx = tmpStrategy.ID - 1
+
+			strategies[indx].Entries = make([]*types.Entry, 0)
+			strategies[indx].TPs = make([]*types.TP, 0)
+			strategies[indx].SL = sl
+			strategies[indx].AllowCounter = tmpStrategy.AllowCounter
+		}
+		strategies[indx].Entries = append(strategies[indx].Entries, entries)
+		strategies[indx].TPs = append(strategies[indx].TPs, tps)
+	}
 	if len(strategies) == 0 {
-		err := fmt.Errorf("the user %s does not have any strategies", c.Locals("username"))
-		utils.NewHTTPError(c, fiber.StatusNotFound, err)
+		utils.NewHTTPError(c, fiber.StatusNotFound, fmt.Errorf("user %s has strategies", c.Locals("username")))
 		return nil
 	}
-
-	fmt.Println(strategies)
-	return nil
+	return c.JSON(strategies)
 }
 
+// @Summary Create a new strategy
+// @Description Create a new strategy for the current user
+// @Security BasicAuth
+// @Tags strategies
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} types.Strategy
+// @Failure 400 {object} utils.HTTPError
+// @Failure 401 {string} string
+// @Router /strategies [post]
 func CreateStrategy(c *fiber.Ctx) error {
 	var s dal.Strategy
 	if err := utils.ParseBodyAndValidate(c, &s); err != nil {
 		fmt.Println(string(c.Body()))
+		fmt.Println(err)
 		return err
 	}
-	fmt.Println(s)
 
 	username := fmt.Sprint(c.Locals("username"))
 	s.UserName = username
-	result := dal.CreateStrategy(&s)
-	fmt.Println(result.Error)
-	fmt.Println(s.ID)
-	return nil
+	if err := dal.CreateStrategy(&s).Error; err != nil {
+		utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
+		return nil
+	}
+
+	result := dal.FindStrategyByID(s, s.ID)
+	if result.Error != nil {
+		utils.NewHTTPError(c, fiber.StatusInternalServerError, result.Error)
+		return nil
+	}
+	strategy := &types.Strategy{}
+	strategy.Entries = make([]*types.Entry, 0)
+	strategy.TPs = make([]*types.TP, 0)
+	strategy.SL = &types.SL{}
+
+	rows, err := result.Rows()
+	if err != nil {
+		utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
+		return nil
+	}
+	defer rows.Close()
+	for rows.Next() {
+		entries := &types.Entry{}
+		tps := &types.TP{}
+
+		err := rows.Scan(&strategy.ID, &strategy.AllowCounter, &entries.Diff, &tps.Diff, &strategy.SL.Diff)
+		if err != nil {
+			utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
+			return nil
+		}
+		strategy.Entries = append(strategy.Entries, entries)
+		strategy.TPs = append(strategy.TPs, tps)
+	}
+	return c.JSON(strategy)
 }

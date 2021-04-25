@@ -22,8 +22,9 @@ type SL struct {
 }
 
 type Strategy struct {
-	ID      int64    `json:"id,omitempty"`
-	Entries []*Entry `json:"entires"`
-	TPs     []*TP    `json:"tps"`
-	SL      *SL      `json:"sl"`
+	ID           int64    `json:"id,omitempty"`
+	AllowCounter bool     `json:"allowCounter"`
+	Entries      []*Entry `json:"entires"`
+	TPs          []*TP    `json:"tps"`
+	SL           *SL      `json:"sl"`
 }

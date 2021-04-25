@@ -14,18 +14,26 @@ definitions:
     properties:
       diff:
         type: number
+      strategyID:
+        type: integer
     type: object
   types.SL:
     properties:
       diff:
         type: number
+      strategyID:
+        type: integer
     type: object
   types.Strategy:
     properties:
+      allowCounter:
+        type: boolean
       entires:
         items:
           $ref: '#/definitions/types.Entry'
         type: array
+      id:
+        type: integer
       sl:
         $ref: '#/definitions/types.SL'
       tps:
@@ -37,6 +45,8 @@ definitions:
     properties:
       diff:
         type: number
+      strategyID:
+        type: integer
     type: object
   utils.HTTPError:
     properties:
@@ -56,6 +66,61 @@ info:
   title: Cornix-TV-Channel API
   version: "1.0"
 paths:
+  /strategies:
+    get:
+      consumes:
+      - application/json
+      description: Get all strategies of the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Strategy'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      security:
+      - BasicAuth: []
+      summary: Get all strategies
+      tags:
+      - strategies
+    post:
+      consumes:
+      - application/json
+      description: Create a new strategy for the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Strategy'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BasicAuth: []
+      summary: Create a new strategy
+      tags:
+      - strategies
   /users:
     delete:
       consumes:
@@ -84,23 +149,21 @@ paths:
     get:
       consumes:
       - application/json
-      description: Get all strategies of the current user
+      description: Get the current user, can be used to verify the user exists
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/types.Strategy'
-            type: array
+            type: string
         "401":
           description: Unauthorized
           schema:
             type: string
       security:
       - BasicAuth: []
-      summary: Get all strategies
+      summary: Get the current user
       tags:
       - users
     post:
