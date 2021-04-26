@@ -1,18 +1,45 @@
 basePath: /api/v1
 definitions:
+  dal.Entry:
+    properties:
+      diff:
+        type: number
+      strategyID:
+        type: integer
+    required:
+    - diff
+    type: object
+  dal.SL:
+    properties:
+      diff:
+        type: number
+      strategyID:
+        type: integer
+    required:
+    - diff
+    type: object
+  dal.TP:
+    properties:
+      diff:
+        type: number
+      strategyID:
+        type: integer
+    required:
+    - diff
+    type: object
   types.AddStrategy:
     properties:
       allowCounter:
         type: boolean
       entires:
         items:
-          $ref: '#/definitions/types.Entry'
+          $ref: '#/definitions/dal.Entry'
         type: array
       sl:
-        $ref: '#/definitions/types.SL'
+        $ref: '#/definitions/dal.SL'
       tps:
         items:
-          $ref: '#/definitions/types.TP'
+          $ref: '#/definitions/dal.TP'
         type: array
     type: object
   types.AddUser:
@@ -122,14 +149,14 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/types.AddUser'
+          $ref: '#/definitions/types.AddStrategy'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/types.AddStrategy'
+            $ref: '#/definitions/types.Strategy'
         "400":
           description: Bad Request
           schema:
@@ -163,6 +190,10 @@ paths:
           description: Unauthorized
           schema:
             type: string
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
       security:
       - BasicAuth: []
       summary: Delete the current user
@@ -215,6 +246,39 @@ paths:
           schema:
             $ref: '#/definitions/utils.HTTPError'
       summary: Create a user
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Change the current users setting. The request body must contain
+        either a new name or a new password. If both, the username and the password
+        get changed.
+      parameters:
+      - description: Userupdate
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/types.AddUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - BasicAuth: []
+      summary: Change the current users setting
       tags:
       - users
 securityDefinitions:

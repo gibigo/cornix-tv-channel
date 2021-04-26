@@ -11,6 +11,6 @@ type UpdateUser struct {
 }
 
 type UserResponse struct {
-	Name     string    `json:"username"`
-	Channels []Channel `json:"channels"`
+	Name     string     `json:"username"`
+	Channels []*Channel `json:"channels"`
 }

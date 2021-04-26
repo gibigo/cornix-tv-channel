@@ -28,4 +28,5 @@ func registerStrategies(api fiber.Router) {
 
 	str.Get("/", s.GetStrategies)
 	str.Post("/", s.CreateStrategy)
+	str.Delete("/", s.DeleteStrategy)
 }

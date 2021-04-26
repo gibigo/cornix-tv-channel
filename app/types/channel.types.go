@@ -10,7 +10,7 @@ type Channel struct {
 
 type Entry struct {
 	Diff       float32 `json:"diff"`
-	StrategyID int64   `json:",omitempty"`
+	StrategyID int64   `json:",omitempty"` // maybe remove this
 }
 
 type TP struct {
@@ -31,7 +31,6 @@ type Strategy struct {
 	SL           *SL      `json:"sl"`
 }
 
-// for swagger docs
 type AddStrategy struct {
 	AllowCounter bool         `json:"allowCounter"`
 	Entries      []*dal.Entry `json:"entires"`

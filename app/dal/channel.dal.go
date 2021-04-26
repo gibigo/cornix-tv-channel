@@ -7,35 +7,35 @@ import (
 
 type Channel struct {
 	ID         int64
-	UserName   string // foreign Key
-	Signals    []TVSignal
+	UserID     int64
+	Signals    []*TVSignal `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	StrategyID int64
-	Strategy   Strategy
+	Strategy   *Strategy
 }
 
 type Strategy struct {
 	ID           int64
-	UserName     string // foreign Key
+	UserID       int64
 	AllowCounter bool
-	Entries      []Entry `validate:"gt=0,dive,required"`
-	TPs          []TP    `validate:"gt=0,dive,required"`
-	SL           SL      `validate:"required,dive,required"`
+	Entries      []*Entry `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"gt=0,dive,required"`
+	TPs          []*TP    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"gt=0,dive,required"`
+	SL           *SL      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"required,dive,required"`
 }
 
 type Entry struct {
-	gorm.Model
+	gorm.Model `swaggerignore:"true"`
 	Diff       float32 `validate:"required"`
 	StrategyID int64
 }
 
 type TP struct {
-	gorm.Model
+	gorm.Model `swaggerignore:"true"`
 	Diff       float32 `validate:"required"`
 	StrategyID int64
 }
 
 type SL struct {
-	gorm.Model
+	gorm.Model `swaggerignore:"true"`
 	Diff       float32 `validate:"required"`
 	StrategyID int64
 }
@@ -47,8 +47,8 @@ func FindStrategy(dest interface{}, query interface{}, conds ...interface{}) *go
 		Joins("JOIN sls ON sls.strategy_id = strategies.id").Select("strategies.id", "strategies.allow_counter", "entries.diff", "tps.diff", "sls.diff")
 }
 
-func FindAllStrategiesFromUser(dest interface{}, username interface{}) *gorm.DB {
-	return FindStrategy(dest, "strategies.user_name = ?", username)
+func FindAllStrategiesFromUser(dest interface{}, userID int64) *gorm.DB {
+	return FindStrategy(dest, "strategies.user_id = ?", userID)
 }
 
 func FindStrategyByID(dest interface{}, id int64) *gorm.DB {

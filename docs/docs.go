@@ -100,7 +100,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.AddUser"
+                            "$ref": "#/definitions/types.AddStrategy"
                         }
                     }
                 ],
@@ -108,7 +108,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/types.AddStrategy"
+                            "$ref": "#/definitions/types.Strategy"
                         }
                     },
                     "400": {
@@ -149,6 +149,55 @@ var doc = `{
                         "description": "OK",
                         "schema": {
                             "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Change the current users setting. The request body must contain either a new name or a new password. If both, the username and the password get changed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Change the current users setting",
+                "parameters": [
+                    {
+                        "description": "Userupdate",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.AddUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
                         }
                     },
                     "401": {
@@ -238,12 +287,60 @@ var doc = `{
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
                     }
                 }
             }
         }
     },
     "definitions": {
+        "dal.Entry": {
+            "type": "object",
+            "required": [
+                "diff"
+            ],
+            "properties": {
+                "diff": {
+                    "type": "number"
+                },
+                "strategyID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dal.SL": {
+            "type": "object",
+            "required": [
+                "diff"
+            ],
+            "properties": {
+                "diff": {
+                    "type": "number"
+                },
+                "strategyID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dal.TP": {
+            "type": "object",
+            "required": [
+                "diff"
+            ],
+            "properties": {
+                "diff": {
+                    "type": "number"
+                },
+                "strategyID": {
+                    "type": "integer"
+                }
+            }
+        },
         "types.AddStrategy": {
             "type": "object",
             "properties": {
@@ -253,16 +350,16 @@ var doc = `{
                 "entires": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/types.Entry"
+                        "$ref": "#/definitions/dal.Entry"
                     }
                 },
                 "sl": {
-                    "$ref": "#/definitions/types.SL"
+                    "$ref": "#/definitions/dal.SL"
                 },
                 "tps": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/types.TP"
+                        "$ref": "#/definitions/dal.TP"
                     }
                 }
             }
