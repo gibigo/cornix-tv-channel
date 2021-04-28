@@ -6,38 +6,60 @@ import (
 )
 
 type Channel struct {
-	ID         int64
-	UserID     int64
+	gorm.Model `swaggerignore:"true"`
 	Signals    []*TVSignal `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	StrategyID int64
-	Strategy   *Strategy
+	Strategy   []*Strategy `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	UserID     uint
 }
 
 type Strategy struct {
-	ID           int64
-	UserID       int64
-	AllowCounter bool
-	Entries      []*Entry `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"gt=0,dive,required"`
-	TPs          []*TP    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"gt=0,dive,required"`
-	SL           *SL      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"required,dive,required"`
+	gorm.Model       `swaggerignore:"true"`
+	AllowCounter     bool
+	Coin             string
+	IsTargetStrategy bool
+	TargetStrategy   *TargetStrategy
+	IsZoneStrategy   bool
+	ZoneStrategy     *ZoneStrategy
+	UserID           uint
+	ChannelID        uint
+}
+
+type ZoneStrategy struct {
+	gorm.Model `swaggerignore:"true"`
+	EntryStart float64
+	EntryStop  float64
+	TPs        []*TP
+	SL         *SL
+	StrategyID uint
+}
+
+type TargetStrategy struct {
+	gorm.Model `swaggerignore:"true"`
+	Entries    []*Entry `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"gt=0,dive,required"`
+	TPs        []*TP    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"gt=0,dive,required"`
+	SL         *SL      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"required,dive,required"`
+	StrategyID uint
 }
 
 type Entry struct {
-	gorm.Model `swaggerignore:"true"`
-	Diff       float32 `validate:"required"`
-	StrategyID int64
+	gorm.Model       `swaggerignore:"true"`
+	Diff             float64 `validate:"required"`
+	TargetStrategyID uint
+	ZoneStrategyID   uint
 }
 
 type TP struct {
-	gorm.Model `swaggerignore:"true"`
-	Diff       float32 `validate:"required"`
-	StrategyID int64
+	gorm.Model       `swaggerignore:"true"`
+	Diff             float64 `validate:"required"`
+	TargetStrategyID uint
+	ZoneStrategyID   uint
 }
 
 type SL struct {
-	gorm.Model `swaggerignore:"true"`
-	Diff       float32 `validate:"required"`
-	StrategyID int64
+	gorm.Model       `swaggerignore:"true"`
+	Diff             float64 `validate:"required"`
+	TargetStrategyID uint
+	ZoneStrategyID   uint
 }
 
 func FindStrategy(dest interface{}, query interface{}, conds ...interface{}) *gorm.DB {

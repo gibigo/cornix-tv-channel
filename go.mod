@@ -9,6 +9,7 @@ require (
 	github.com/go-playground/validator/v10 v10.5.0
 	github.com/gofiber/fiber/v2 v2.8.0
 	github.com/klauspost/compress v1.12.1 // indirect
+	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.7.1
 	github.com/swaggo/swag v1.7.0
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b

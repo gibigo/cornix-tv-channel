@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+
 	cfg := loadConfiguration()
 
 	database.Connect(cfg.Database)
