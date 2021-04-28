@@ -12,7 +12,7 @@ import (
 
 var BasicAuth = basicauth.New(basicauth.Config{
 	Users:      map[string]string{},
-	Realm:      "Forbidden",
+	Realm:      "Restricted",
 	Authorizer: isAuthorized,
 })
 
@@ -23,11 +23,9 @@ func isAuthorized(username, pwd string) bool {
 		log.Printf("[middleware][authorize] error while reading user from database: %s", result.Error)
 		return false
 	}
-
 	if err := password.Verify(user.Password, pwd); err != nil {
 		return false
 	} else {
 		return true
 	}
-
 }
