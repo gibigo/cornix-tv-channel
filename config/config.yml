@@ -2,3 +2,5 @@
 registration: true
 database:
   debug: false
+logging:
+  logLevel: info

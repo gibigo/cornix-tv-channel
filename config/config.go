@@ -5,8 +5,10 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/gibigo/cornix-tv-channel/config/database"
+	"github.com/gibigo/cornix-tv-channel/utils/logging"
 	"github.com/spf13/viper"
 )
 
@@ -20,8 +22,9 @@ var (
 )
 
 type Config struct {
-	AllowRegistrations bool `mapstructure:"registration"`
-	Database           *database.Config
+	AllowRegistrations bool             `mapstructure:"registration"`
+	Database           *database.Config `mapstructure:"database"`
+	Logging            *logging.Config  `mapstructure:"logging"`
 }
 
 func Get() *Config {
@@ -60,8 +63,10 @@ func readConfiguration(fileName string) (config *Config, err error) {
 
 	viper.BindEnv("registration", "REGISTRATION")
 	viper.BindEnv("database.debug", "DATABASE_DEBUG")
+	viper.BindEnv("logging.logLevel", "LOG_LEVEL")
 
 	viper.SetDefault("database.debug", false)
+	viper.SetDefault("logging.logLevel", "Info")
 
 	viper.AutomaticEnv()
 
@@ -75,8 +80,22 @@ func readConfiguration(fileName string) (config *Config, err error) {
 	err = viper.Unmarshal(&config)
 	if err == nil {
 		validateGeneralConfig(config)
+		validateLoggingConfig(config)
 	}
 	return
 }
 
 func validateGeneralConfig(cfg *Config) {}
+
+func validateLoggingConfig(cfg *Config) {
+	if cfg.Logging == nil {
+		return
+	}
+	if logLevel := cfg.Logging.LogLevel; logLevel != "" {
+		if !strings.EqualFold(logLevel, "Info") &&
+			!strings.EqualFold(logLevel, "Warn") &&
+			!strings.EqualFold(logLevel, "Debug") {
+			panic("invalid logging configuration. Valid options: Warn, Info, Debug")
+		}
+	}
+}

@@ -13,7 +13,7 @@ var (
 )
 
 type Config struct {
-	Debug bool
+	Debug bool `mapstructure:"debug"`
 }
 
 func Connect(config *Config) {
