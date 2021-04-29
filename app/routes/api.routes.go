@@ -37,4 +37,5 @@ func registerChannels(api fiber.Router) {
 	ch := v1.Group("/channels").Use(middleware.BasicAuth)
 
 	ch.Post("/", s.CreateChannel)
+	ch.Get("/", s.GetChannels)
 }

@@ -1,51 +1,18 @@
 basePath: /api/v1
 definitions:
-  dal.Entry:
-    properties:
-      diff:
-        type: number
-      targetStrategyID:
-        type: integer
-      zoneStrategyID:
-        type: integer
-    required:
-    - diff
-    type: object
-  dal.SL:
-    properties:
-      diff:
-        type: number
-      targetStrategyID:
-        type: integer
-      zoneStrategyID:
-        type: integer
-    required:
-    - diff
-    type: object
-  dal.TP:
-    properties:
-      diff:
-        type: number
-      targetStrategyID:
-        type: integer
-      zoneStrategyID:
-        type: integer
-    required:
-    - diff
-    type: object
   types.AddStrategy:
     properties:
       allowCounter:
         type: boolean
       entires:
         items:
-          $ref: '#/definitions/dal.Entry'
+          $ref: '#/definitions/types.Entry'
         type: array
       sl:
-        $ref: '#/definitions/dal.SL'
+        $ref: '#/definitions/types.SL'
       tps:
         items:
-          $ref: '#/definitions/dal.TP'
+          $ref: '#/definitions/types.TP'
         type: array
     type: object
   types.AddUser:
@@ -58,44 +25,108 @@ definitions:
     - name
     - password
     type: object
+  types.Channel:
+    properties:
+      id:
+        type: integer
+      strategies:
+        items:
+          $ref: '#/definitions/types.Strategy'
+        type: array
+      telegramId:
+        type: integer
+    type: object
   types.Entry:
     properties:
       diff:
         type: number
-      strategyID:
-        description: maybe remove this
+      id:
+        type: integer
+      targetStrategyID:
+        type: integer
+      zoneStrategyID:
         type: integer
     type: object
   types.SL:
     properties:
       diff:
         type: number
-      strategyID:
+      id:
+        type: integer
+      targetStrategyID:
+        type: integer
+      zoneStrategyID:
         type: integer
     type: object
   types.Strategy:
     properties:
       allowCounter:
         type: boolean
-      entires:
-        items:
-          $ref: '#/definitions/types.Entry'
-        type: array
+      channelID:
+        type: integer
+      coin:
+        type: string
       id:
         type: integer
-      sl:
-        $ref: '#/definitions/types.SL'
-      tps:
-        items:
-          $ref: '#/definitions/types.TP'
-        type: array
+      isTargetStrategy:
+        type: boolean
+      isZoneStrategy:
+        type: boolean
+      targetStrategy:
+        $ref: '#/definitions/types.TargetStrategy'
+      userID:
+        type: integer
+      zoneStrategy:
+        $ref: '#/definitions/types.ZoneStrategy'
     type: object
   types.TP:
     properties:
       diff:
         type: number
+      id:
+        type: integer
+      targetStrategyID:
+        type: integer
+      zoneStrategyID:
+        type: integer
+    type: object
+  types.TargetStrategy:
+    properties:
+      entries:
+        items:
+          $ref: '#/definitions/types.Entry'
+        type: array
+      id:
+        type: integer
+      isBreakout:
+        type: boolean
+      sl:
+        $ref: '#/definitions/types.SL'
       strategyID:
         type: integer
+      tps:
+        items:
+          $ref: '#/definitions/types.TP'
+        type: array
+    type: object
+  types.ZoneStrategy:
+    properties:
+      entryStart:
+        type: number
+      entryStop:
+        type: number
+      id:
+        type: integer
+      isBreakout:
+        type: boolean
+      sl:
+        $ref: '#/definitions/types.SL'
+      strategyID:
+        type: integer
+      tps:
+        items:
+          $ref: '#/definitions/types.TP'
+        type: array
     type: object
   utils.HTTPError:
     properties:
@@ -115,6 +146,64 @@ info:
   title: Cornix-TV-Channel API
   version: "1.0"
 paths:
+  /channels:
+    get:
+      consumes:
+      - application/json
+      description: Get all channels of the current user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Channel'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      security:
+      - BasicAuth: []
+      summary: Get all channels
+      tags:
+      - channels
+    post:
+      consumes:
+      - application/json
+      description: Create a new channel
+      parameters:
+      - description: User to create
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/types.AddUser'
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      security:
+      - BasicAuth: []
+      summary: Create a channel
+      tags:
+      - channels
   /strategies:
     post:
       consumes:
@@ -203,6 +292,8 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/types.AddUser'
+      produces:
+      - application/json
       responses:
         "204":
           description: No Content

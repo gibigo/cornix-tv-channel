@@ -28,6 +28,98 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/channels": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get all channels of the current user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channels"
+                ],
+                "summary": "Get all channels",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.Channel"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Create a new channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channels"
+                ],
+                "summary": "Create a channel",
+                "parameters": [
+                    {
+                        "description": "User to create",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.AddUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/strategies": {
             "post": {
                 "security": [
@@ -166,6 +258,9 @@ var doc = `{
                 "consumes": [
                     "application/json"
                 ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "users"
                 ],
@@ -249,57 +344,6 @@ var doc = `{
         }
     },
     "definitions": {
-        "dal.Entry": {
-            "type": "object",
-            "required": [
-                "diff"
-            ],
-            "properties": {
-                "diff": {
-                    "type": "number"
-                },
-                "targetStrategyID": {
-                    "type": "integer"
-                },
-                "zoneStrategyID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dal.SL": {
-            "type": "object",
-            "required": [
-                "diff"
-            ],
-            "properties": {
-                "diff": {
-                    "type": "number"
-                },
-                "targetStrategyID": {
-                    "type": "integer"
-                },
-                "zoneStrategyID": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dal.TP": {
-            "type": "object",
-            "required": [
-                "diff"
-            ],
-            "properties": {
-                "diff": {
-                    "type": "number"
-                },
-                "targetStrategyID": {
-                    "type": "integer"
-                },
-                "zoneStrategyID": {
-                    "type": "integer"
-                }
-            }
-        },
         "types.AddStrategy": {
             "type": "object",
             "properties": {
@@ -309,16 +353,16 @@ var doc = `{
                 "entires": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dal.Entry"
+                        "$ref": "#/definitions/types.Entry"
                     }
                 },
                 "sl": {
-                    "$ref": "#/definitions/dal.SL"
+                    "$ref": "#/definitions/types.SL"
                 },
                 "tps": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/dal.TP"
+                        "$ref": "#/definitions/types.TP"
                     }
                 }
             }
@@ -338,14 +382,36 @@ var doc = `{
                 }
             }
         },
+        "types.Channel": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "strategies": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Strategy"
+                    }
+                },
+                "telegramId": {
+                    "type": "integer"
+                }
+            }
+        },
         "types.Entry": {
             "type": "object",
             "properties": {
                 "diff": {
                     "type": "number"
                 },
-                "strategyID": {
-                    "description": "maybe remove this",
+                "id": {
+                    "type": "integer"
+                },
+                "targetStrategyID": {
+                    "type": "integer"
+                },
+                "zoneStrategyID": {
                     "type": "integer"
                 }
             }
@@ -356,7 +422,13 @@ var doc = `{
                 "diff": {
                     "type": "number"
                 },
-                "strategyID": {
+                "id": {
+                    "type": "integer"
+                },
+                "targetStrategyID": {
+                    "type": "integer"
+                },
+                "zoneStrategyID": {
                     "type": "integer"
                 }
             }
@@ -367,23 +439,29 @@ var doc = `{
                 "allowCounter": {
                     "type": "boolean"
                 },
-                "entires": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/types.Entry"
-                    }
+                "channelID": {
+                    "type": "integer"
+                },
+                "coin": {
+                    "type": "string"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "sl": {
-                    "$ref": "#/definitions/types.SL"
+                "isTargetStrategy": {
+                    "type": "boolean"
                 },
-                "tps": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/types.TP"
-                    }
+                "isZoneStrategy": {
+                    "type": "boolean"
+                },
+                "targetStrategy": {
+                    "$ref": "#/definitions/types.TargetStrategy"
+                },
+                "userID": {
+                    "type": "integer"
+                },
+                "zoneStrategy": {
+                    "$ref": "#/definitions/types.ZoneStrategy"
                 }
             }
         },
@@ -393,8 +471,72 @@ var doc = `{
                 "diff": {
                     "type": "number"
                 },
+                "id": {
+                    "type": "integer"
+                },
+                "targetStrategyID": {
+                    "type": "integer"
+                },
+                "zoneStrategyID": {
+                    "type": "integer"
+                }
+            }
+        },
+        "types.TargetStrategy": {
+            "type": "object",
+            "properties": {
+                "entries": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.Entry"
+                    }
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isBreakout": {
+                    "type": "boolean"
+                },
+                "sl": {
+                    "$ref": "#/definitions/types.SL"
+                },
                 "strategyID": {
                     "type": "integer"
+                },
+                "tps": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.TP"
+                    }
+                }
+            }
+        },
+        "types.ZoneStrategy": {
+            "type": "object",
+            "properties": {
+                "entryStart": {
+                    "type": "number"
+                },
+                "entryStop": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "isBreakout": {
+                    "type": "boolean"
+                },
+                "sl": {
+                    "$ref": "#/definitions/types.SL"
+                },
+                "strategyID": {
+                    "type": "integer"
+                },
+                "tps": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/types.TP"
+                    }
                 }
             }
         },

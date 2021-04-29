@@ -15,6 +15,7 @@ import (
 
 // @Summary Create a channel
 // @Description Create a new channel
+// @Security BasicAuth
 // @Tags channels
 // @Accept  json
 // @Produce  json
@@ -30,8 +31,6 @@ func CreateChannel(c *fiber.Ctx) error {
 		"function": "CreateChannel",
 		"package":  "services",
 	})
-
-	fmt.Println(string(c.Body()))
 
 	// parse the request body
 	var newChannel types.AddChannel
@@ -71,6 +70,41 @@ func CreateChannel(c *fiber.Ctx) error {
 
 	logger.Info("created telegram channel: ", channel.Telegram)
 
+	// replace noContent with channel struct
 	c.Status(fiber.StatusNoContent)
 	return nil
+}
+
+// @Summary Get all channels
+// @Description Get all channels of the current user
+// @Security BasicAuth
+// @Tags channels
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} types.Channel
+// @Failure 401 {string} string
+// @Failure 404 {object} utils.HTTPError
+// @Router /channels [get]
+func GetChannels(c *fiber.Ctx) error {
+
+	// define logger for this function
+	logger := logging.Log.WithFields(log.Fields{
+		"function": "GetChannels",
+		"package":  "services",
+	})
+
+	// get all channels from the user
+	var channels []*types.Channel
+	result := dal.FindAllChannelsFromUser(&channels, c.Locals("username"))
+	if err := result.Error; err != nil {
+		logger.Error(err)
+		return utils.NewHTTPError(c, fiber.StatusInternalServerError, result.Error)
+	}
+
+	// return 404 if user has no channels configured
+	if result.RowsAffected == 0 {
+		return utils.NewHTTPError(c, fiber.StatusNotFound, fmt.Sprintf("no channels found for user %s", c.Locals("username")))
+	}
+
+	return c.JSON(channels)
 }

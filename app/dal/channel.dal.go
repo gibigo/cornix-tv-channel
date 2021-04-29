@@ -24,3 +24,8 @@ func FindChannel(dest interface{}, conds ...interface{}) *gorm.DB {
 func CreateChannel(channel *Channel) *gorm.DB {
 	return database.DB.Create(channel)
 }
+
+func FindAllChannelsFromUser(dest interface{}, username interface{}) *gorm.DB {
+	subQuery := database.DB.Select("id").Where("name == ?", username).Table("users")
+	return database.DB.Model(&Channel{}).Where("user_id == (?)", subQuery).Find(dest)
+}
