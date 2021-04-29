@@ -8,19 +8,26 @@ import (
 	"github.com/gibigo/cornix-tv-channel/config"
 	"github.com/gibigo/cornix-tv-channel/config/database"
 	_ "github.com/gibigo/cornix-tv-channel/docs"
+	"github.com/gibigo/cornix-tv-channel/utils/logging"
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
 
+	// load the configuration
 	cfg := loadConfiguration()
 
-	database.Connect(cfg.Database)
-	database.Migrate(&dal.User{}, &dal.Channel{}, &dal.TVSignal{}, &dal.Entry{}, &dal.TP{}, &dal.SL{})
+	// init the logger
+	logging.Init(cfg.Logging)
 
+	// who would have thought, connects to the database
+	database.Connect(cfg.Database)
+	// create the database structure
+	database.Migrate(&dal.User{}, &dal.TVSignal{}, &dal.Channel{}, &dal.Strategy{}, &dal.ZoneStrategy{}, &dal.TargetStrategy{}, &dal.Entry{}, &dal.TP{}, &dal.SL{})
+
+	// lets fire up the API
 	app := fiber.New()
 	routes.SetupRoutes(app)
-
 	app.Listen(":3000")
 }
 
