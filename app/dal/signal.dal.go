@@ -7,4 +7,5 @@ type TVSignal struct {
 	Ticker     string
 	TelegramID int64
 	Direction  string
+	ChannelID  uint
 }
