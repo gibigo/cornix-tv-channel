@@ -1,6 +1,7 @@
 package types
 
 type GetUser struct {
+	ID   uint
 	Name string `json:"name"`
 }
 
