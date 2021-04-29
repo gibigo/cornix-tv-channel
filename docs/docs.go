@@ -29,53 +29,6 @@ var doc = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/strategies": {
-            "get": {
-                "security": [
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get all strategies of the current user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "strategies"
-                ],
-                "summary": "Get all strategies",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/types.Strategy"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/utils.HTTPError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/utils.HTTPError"
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -145,8 +98,8 @@ var doc = `{
                 ],
                 "summary": "Get the current user",
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
                             "type": "string"
                         }
@@ -188,8 +141,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
                             "type": "string"
                         }
@@ -213,9 +166,6 @@ var doc = `{
                 "consumes": [
                     "application/json"
                 ],
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "users"
                 ],
@@ -232,8 +182,8 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
                             "type": "string"
                         }
@@ -246,6 +196,12 @@ var doc = `{
                     },
                     "409": {
                         "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "501": {
+                        "description": "if user registration is disabled on the server",
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
@@ -270,8 +226,8 @@ var doc = `{
                 ],
                 "summary": "Delete the current user",
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
                             "type": "string"
                         }
@@ -286,12 +242,6 @@ var doc = `{
                         "description": "Unauthorized",
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/utils.HTTPError"
                         }
                     }
                 }
@@ -308,7 +258,10 @@ var doc = `{
                 "diff": {
                     "type": "number"
                 },
-                "strategyID": {
+                "targetStrategyID": {
+                    "type": "integer"
+                },
+                "zoneStrategyID": {
                     "type": "integer"
                 }
             }
@@ -322,7 +275,10 @@ var doc = `{
                 "diff": {
                     "type": "number"
                 },
-                "strategyID": {
+                "targetStrategyID": {
+                    "type": "integer"
+                },
+                "zoneStrategyID": {
                     "type": "integer"
                 }
             }
@@ -336,7 +292,10 @@ var doc = `{
                 "diff": {
                     "type": "number"
                 },
-                "strategyID": {
+                "targetStrategyID": {
+                    "type": "integer"
+                },
+                "zoneStrategyID": {
                     "type": "integer"
                 }
             }
@@ -386,6 +345,7 @@ var doc = `{
                     "type": "number"
                 },
                 "strategyID": {
+                    "description": "maybe remove this",
                     "type": "integer"
                 }
             }

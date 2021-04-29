@@ -13,53 +13,6 @@
     "basePath": "/api/v1",
     "paths": {
         "/strategies": {
-            "get": {
-                "security": [
-                    {
-                        "BasicAuth": []
-                    }
-                ],
-                "description": "Get all strategies of the current user",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "strategies"
-                ],
-                "summary": "Get all strategies",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/types.Strategy"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/utils.HTTPError"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/utils.HTTPError"
-                        }
-                    }
-                }
-            },
             "post": {
                 "security": [
                     {
@@ -129,8 +82,8 @@
                 ],
                 "summary": "Get the current user",
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
                             "type": "string"
                         }
@@ -172,8 +125,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
                             "type": "string"
                         }
@@ -197,9 +150,6 @@
                 "consumes": [
                     "application/json"
                 ],
-                "produces": [
-                    "application/json"
-                ],
                 "tags": [
                     "users"
                 ],
@@ -216,8 +166,8 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
                             "type": "string"
                         }
@@ -230,6 +180,12 @@
                     },
                     "409": {
                         "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    },
+                    "501": {
+                        "description": "if user registration is disabled on the server",
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
@@ -254,8 +210,8 @@
                 ],
                 "summary": "Delete the current user",
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "204": {
+                        "description": "No Content",
                         "schema": {
                             "type": "string"
                         }
@@ -270,12 +226,6 @@
                         "description": "Unauthorized",
                         "schema": {
                             "type": "string"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict",
-                        "schema": {
-                            "$ref": "#/definitions/utils.HTTPError"
                         }
                     }
                 }
@@ -292,7 +242,10 @@
                 "diff": {
                     "type": "number"
                 },
-                "strategyID": {
+                "targetStrategyID": {
+                    "type": "integer"
+                },
+                "zoneStrategyID": {
                     "type": "integer"
                 }
             }
@@ -306,7 +259,10 @@
                 "diff": {
                     "type": "number"
                 },
-                "strategyID": {
+                "targetStrategyID": {
+                    "type": "integer"
+                },
+                "zoneStrategyID": {
                     "type": "integer"
                 }
             }
@@ -320,7 +276,10 @@
                 "diff": {
                     "type": "number"
                 },
-                "strategyID": {
+                "targetStrategyID": {
+                    "type": "integer"
+                },
+                "zoneStrategyID": {
                     "type": "integer"
                 }
             }
@@ -370,6 +329,7 @@
                     "type": "number"
                 },
                 "strategyID": {
+                    "description": "maybe remove this",
                     "type": "integer"
                 }
             }

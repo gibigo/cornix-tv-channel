@@ -4,7 +4,9 @@ definitions:
     properties:
       diff:
         type: number
-      strategyID:
+      targetStrategyID:
+        type: integer
+      zoneStrategyID:
         type: integer
     required:
     - diff
@@ -13,7 +15,9 @@ definitions:
     properties:
       diff:
         type: number
-      strategyID:
+      targetStrategyID:
+        type: integer
+      zoneStrategyID:
         type: integer
     required:
     - diff
@@ -22,7 +26,9 @@ definitions:
     properties:
       diff:
         type: number
-      strategyID:
+      targetStrategyID:
+        type: integer
+      zoneStrategyID:
         type: integer
     required:
     - diff
@@ -57,6 +63,7 @@ definitions:
       diff:
         type: number
       strategyID:
+        description: maybe remove this
         type: integer
     type: object
   types.SL:
@@ -109,36 +116,6 @@ info:
   version: "1.0"
 paths:
   /strategies:
-    get:
-      consumes:
-      - application/json
-      description: Get all strategies of the current user
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/types.Strategy'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/utils.HTTPError'
-        "401":
-          description: Unauthorized
-          schema:
-            type: string
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/utils.HTTPError'
-      security:
-      - BasicAuth: []
-      summary: Get all strategies
-      tags:
-      - strategies
     post:
       consumes:
       - application/json
@@ -178,8 +155,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
           schema:
             type: string
         "400":
@@ -190,10 +167,6 @@ paths:
           description: Unauthorized
           schema:
             type: string
-        "409":
-          description: Conflict
-          schema:
-            $ref: '#/definitions/utils.HTTPError'
       security:
       - BasicAuth: []
       summary: Delete the current user
@@ -206,8 +179,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
           schema:
             type: string
         "401":
@@ -230,11 +203,9 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/types.AddUser'
-      produces:
-      - application/json
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
           schema:
             type: string
         "401":
@@ -243,6 +214,10 @@ paths:
             type: string
         "409":
           description: Conflict
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+        "501":
+          description: if user registration is disabled on the server
           schema:
             $ref: '#/definitions/utils.HTTPError'
       summary: Create a user
@@ -264,8 +239,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "204":
+          description: No Content
           schema:
             type: string
         "400":
