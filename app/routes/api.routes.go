@@ -9,6 +9,7 @@ import (
 func apiRoutes(api fiber.Router) {
 	r := api.Group("/api")
 	registerUsers(r)
+	registerChannels(r)
 	registerStrategies(r)
 }
 
@@ -29,4 +30,11 @@ func registerStrategies(api fiber.Router) {
 	//str.Get("/", s.GetStrategies)
 	str.Post("/", s.CreateStrategy)
 	//str.Delete("/", s.DeleteStrategy)
+}
+
+func registerChannels(api fiber.Router) {
+	v1 := api.Group("/v1")
+	ch := v1.Group("/channels").Use(middleware.BasicAuth)
+
+	ch.Post("/", s.CreateChannel)
 }
