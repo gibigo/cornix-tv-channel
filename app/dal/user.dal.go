@@ -7,11 +7,14 @@ import (
 )
 
 type User struct {
-	ID         int64
-	Name       string
-	Password   string
-	Channels   []*Channel  `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	Strategies []*Strategy `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	gorm.Model
+	Name     string
+	Password string
+	Channels []*Channel `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+}
+
+func CreateUser(user *User) *gorm.DB {
+	return database.DB.Create(user)
 }
 
 func FindUser(dest interface{}, conds ...interface{}) *gorm.DB {
@@ -22,12 +25,8 @@ func FindUserByName(dest interface{}, username interface{}) *gorm.DB {
 	return FindUser(dest, "name = ?", username)
 }
 
-func CreateUser(user *User) *gorm.DB {
-	return database.DB.Create(user)
-}
-
 func DeleteUser(username interface{}) *gorm.DB {
-	return database.DB.Where("name = ?", username).Delete(&User{})
+	return database.DB.Unscoped().Where("name = ?", username).Delete(&User{})
 }
 
 func ChangeUserPassword(username, newPassword string) *gorm.DB {
