@@ -15,8 +15,8 @@ type Config struct {
 	LogLevel string `mapstructure:"logLevel"`
 }
 
-// Initalize a new logger.
-//You can set a different logging level by useing the logging.logLevel YAML key or using the LOG_LEVEL env variable.
+// Initialize a new logger.
+// You can set a different logging level by using the logging.logLevel YAML key or using the LOG_LEVEL env variable.
 // By default the logging level is set to "info" but it can be changed to either "warn" or "debug"
 func Init(cfg *Config) {
 
