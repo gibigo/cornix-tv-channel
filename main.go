@@ -22,8 +22,20 @@ func main() {
 
 	// who would have thought, connects to the database
 	database.Connect(cfg.Database)
+
 	// create the database structure
-	database.Migrate(&dal.User{}, &dal.TVSignal{}, &dal.Channel{}, &dal.Strategy{}, &dal.ZoneStrategy{}, &dal.TargetStrategy{}, &dal.Entry{}, &dal.TP{}, &dal.SL{})
+	tables := []interface{}{
+		&dal.User{},
+		&dal.TVSignal{},
+		&dal.Channel{},
+		&dal.Strategy{},
+		&dal.ZoneStrategy{},
+		&dal.TargetStrategy{},
+		&dal.Entry{},
+		&dal.TP{},
+		&dal.SL{},
+	}
+	database.Migrate(tables...)
 
 	// lets fire up the API
 	app := fiber.New()
