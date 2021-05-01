@@ -47,6 +47,13 @@ definitions:
       zoneStrategyID:
         type: integer
     type: object
+  types.GetUser:
+    properties:
+      identifier:
+        type: string
+      name:
+        type: string
+    type: object
   types.SL:
     properties:
       diff:
@@ -268,10 +275,10 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/types.GetUser'
         "401":
           description: Unauthorized
           schema:

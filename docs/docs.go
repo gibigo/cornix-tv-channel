@@ -190,10 +190,10 @@ var doc = `{
                 ],
                 "summary": "Get the current user",
                 "responses": {
-                    "204": {
-                        "description": "No Content",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/types.GetUser"
                         }
                     },
                     "401": {
@@ -413,6 +413,17 @@ var doc = `{
                 },
                 "zoneStrategyID": {
                     "type": "integer"
+                }
+            }
+        },
+        "types.GetUser": {
+            "type": "object",
+            "properties": {
+                "identifier": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
                 }
             }
         },
