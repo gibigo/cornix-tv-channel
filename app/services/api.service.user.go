@@ -11,6 +11,7 @@ import (
 	"github.com/gibigo/cornix-tv-channel/utils/logging"
 	"github.com/gibigo/cornix-tv-channel/utils/password"
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -21,7 +22,7 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param user body types.AddUser true "User to create"
-// @Success 204 {string} string
+// @Success 200 {object} types.GetUser
 // @Failure 401 {string} string
 // @Failure 409 {object} utils.HTTPError
 // @Failure 501 {object} utils.HTTPError "if user registration is disabled on the server"
@@ -61,6 +62,7 @@ func CreateUser(c *fiber.Ctx) error {
 	user := &dal.User{
 		Name:     newUser.Name,
 		Password: password.Generate(newUser.Password),
+		UUID:     uuid.New().String(),
 	}
 	if err := dal.CreateUser(user).Error; err != nil {
 		logger.Error(err)
@@ -69,8 +71,12 @@ func CreateUser(c *fiber.Ctx) error {
 
 	logger.Info("created user: ", user.Name)
 
-	c.Status(fiber.StatusNoContent)
-	return nil
+	returnUser := &types.GetUser{
+		Name: user.Name,
+		UUID: user.UUID,
+	}
+
+	return c.JSON(returnUser)
 }
 
 // @Summary Get the current user
@@ -79,7 +85,7 @@ func CreateUser(c *fiber.Ctx) error {
 // @Tags users
 // @Accept  json
 // @Produce  json
-// @Success 204 {string} string
+// @Success 200 {object} types.GetUser
 // @Failure 401 {string} string
 // @Router /users [get]
 func GetUser(c *fiber.Ctx) error {
@@ -96,8 +102,7 @@ func GetUser(c *fiber.Ctx) error {
 		logger.Error(err)
 		return utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
 	}
-	c.Status(fiber.StatusNoContent)
-	return nil
+	return c.Status(fiber.StatusOK).JSON(user)
 }
 
 // @Summary Delete the current user
@@ -162,7 +167,7 @@ func UpdateUser(c *fiber.Ctx) error {
 			logger.Error(err)
 			return utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
 		}
-		logger.Info("changed password from user: ", username)
+		logger.Info("changed password for user: ", username)
 
 		// change only username
 	} else if len(userUpdate.Name) > 0 && len(userUpdate.Password) == 0 {

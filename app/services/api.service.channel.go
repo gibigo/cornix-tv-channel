@@ -52,7 +52,7 @@ func CreateChannel(c *fiber.Ctx) error {
 	}
 
 	// get the user id of the current user
-	var user *types.GetUser
+	var user *types.GetUserWithID
 	if err := dal.FindUserByName(&user, c.Locals("username")).Error; err != nil {
 		logger.Error(err)
 		return utils.NewHTTPError(c, fiber.StatusInternalServerError, err)

@@ -1,8 +1,14 @@
 package types
 
 type GetUser struct {
+	Name string `json:"name"`
+	UUID string `json:"identifier"`
+}
+
+type GetUserWithID struct {
 	ID   uint
 	Name string `json:"name"`
+	UUID string `json:"identifier"`
 }
 
 type AddUser struct {
