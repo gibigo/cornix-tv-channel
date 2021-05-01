@@ -18,8 +18,7 @@ type Config struct {
 
 func Connect(config *Config) {
 	var err error
-	//var gormConfig = &gorm.Config{QueryFields: true}
-	var gormConfig = &gorm.Config{}
+	var gormConfig = &gorm.Config{QueryFields: true}
 
 	if !config.Debug {
 		gormConfig.Logger = logger.Default.LogMode(logger.LogLevel(0))
