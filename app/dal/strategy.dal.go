@@ -6,7 +6,7 @@ import (
 )
 
 type Strategy struct {
-	gorm.Model       `swaggerignore:"true"`
+	gorm.Model
 	AllowCounter     bool
 	Coin             string
 	IsTargetStrategy bool
@@ -18,7 +18,7 @@ type Strategy struct {
 }
 
 type ZoneStrategy struct {
-	gorm.Model `swaggerignore:"true"`
+	gorm.Model
 	EntryStart float64
 	EntryStop  float64
 	TPs        []*TP
@@ -28,7 +28,7 @@ type ZoneStrategy struct {
 }
 
 type TargetStrategy struct {
-	gorm.Model `swaggerignore:"true"`
+	gorm.Model
 	Entries    []*Entry `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"gt=0,dive,required"`
 	TPs        []*TP    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"gt=0,dive,required"`
 	SL         *SL      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"required,dive,required"`
@@ -37,21 +37,21 @@ type TargetStrategy struct {
 }
 
 type Entry struct {
-	gorm.Model       `swaggerignore:"true"`
+	gorm.Model
 	Diff             float64 `validate:"required"`
 	TargetStrategyID uint
 	ZoneStrategyID   uint
 }
 
 type TP struct {
-	gorm.Model       `swaggerignore:"true"`
+	gorm.Model
 	Diff             float64 `validate:"required"`
 	TargetStrategyID uint
 	ZoneStrategyID   uint
 }
 
 type SL struct {
-	gorm.Model       `swaggerignore:"true"`
+	gorm.Model
 	Diff             float64 `validate:"required"`
 	TargetStrategyID uint
 	ZoneStrategyID   uint

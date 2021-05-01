@@ -7,10 +7,11 @@ import (
 )
 
 type User struct {
-	gorm.Model `swaggerignore:"true"`
-	Name       string
-	Password   string
-	Channels   []*Channel `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	gorm.Model
+	Name     string
+	Password string
+	UUID     string
+	Channels []*Channel `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
 func CreateUser(user *User) *gorm.DB {
