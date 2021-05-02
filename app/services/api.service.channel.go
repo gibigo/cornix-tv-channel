@@ -68,7 +68,7 @@ func CreateChannel(c *fiber.Ctx) error {
 		return utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
 	}
 
-	logger.Info("created telegram channel: ", channel.Telegram)
+	logger.Infof("user %s created telegram channel: %s", c.Locals("username"), channel.Telegram)
 
 	// fetch the newly created channel
 	var returnChannel types.Channel
