@@ -13,6 +13,7 @@ func apiRoutes(api fiber.Router) {
 	registerStrategies(r)
 }
 
+// register user endpoints
 func registerUsers(api fiber.Router) {
 	v1 := api.Group("/v1")
 	users := v1.Group("/users")
@@ -23,6 +24,8 @@ func registerUsers(api fiber.Router) {
 	users.Use(middleware.BasicAuth).Put("/", s.UpdateUser)
 }
 
+// register strategy endpoints
+// TODO
 func registerStrategies(api fiber.Router) {
 	v1 := api.Group("/v1")
 	str := v1.Group("/strategies").Use(middleware.BasicAuth)
@@ -32,10 +35,14 @@ func registerStrategies(api fiber.Router) {
 	//str.Delete("/", s.DeleteStrategy)
 }
 
+// register channel endpoints
 func registerChannels(api fiber.Router) {
 	v1 := api.Group("/v1")
 	ch := v1.Group("/channels").Use(middleware.BasicAuth)
 
 	ch.Post("/", s.CreateChannel)
 	ch.Get("/", s.GetChannels)
+	ch.Get("/:channel", s.GetChannel)
+	ch.Delete("/:channel", s.DeleteChannel)
+	ch.Put("/:channel", s.UpdateChannel)
 }

@@ -1,5 +1,12 @@
 basePath: /api/v1
 definitions:
+  types.AddChannel:
+    properties:
+      telegramId:
+        type: integer
+    required:
+    - telegramId
+    type: object
   types.AddStrategy:
     properties:
       allowCounter:
@@ -116,6 +123,13 @@ definitions:
           $ref: '#/definitions/types.TP'
         type: array
     type: object
+  types.UpdateChannel:
+    properties:
+      telegramId:
+        type: integer
+    required:
+    - telegramId
+    type: object
   types.ZoneStrategy:
     properties:
       entryStart:
@@ -148,7 +162,7 @@ host: https://yourforwarder.io
 info:
   contact: {}
   license:
-    name: MIT
+    name: GPLv3
     url: https://github.com/gibigo/cornix-tv-channel/blob/master/LICENSE
   title: Cornix-TV-Channel API
   version: "1.0"
@@ -185,19 +199,19 @@ paths:
       - application/json
       description: Create a new channel
       parameters:
-      - description: User to create
+      - description: Channel to create
         in: body
-        name: user
+        name: channel
         required: true
         schema:
-          $ref: '#/definitions/types.AddUser'
+          $ref: '#/definitions/types.AddChannel'
       produces:
       - application/json
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/types.Channel'
         "401":
           description: Unauthorized
           schema:
@@ -209,6 +223,103 @@ paths:
       security:
       - BasicAuth: []
       summary: Create a channel
+      tags:
+      - channels
+  /channels/{channel_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a channel and all related strategies
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channel_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      security:
+      - BasicAuth: []
+      summary: Delete a channel
+      tags:
+      - channels
+    get:
+      consumes:
+      - application/json
+      description: Get a spectific channel
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channel_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Channel'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      security:
+      - BasicAuth: []
+      summary: Get a spectific channel
+      tags:
+      - channels
+    put:
+      consumes:
+      - application/json
+      description: Change the telegram id of a channel and keep all related strategies
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channel_id
+        required: true
+        type: integer
+      - description: Channel to create
+        in: body
+        name: channel
+        required: true
+        schema:
+          $ref: '#/definitions/types.UpdateChannel'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Channel'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      security:
+      - BasicAuth: []
+      summary: Update a channel
       tags:
       - channels
   /strategies:
@@ -302,10 +413,10 @@ paths:
       produces:
       - application/json
       responses:
-        "204":
-          description: No Content
+        "200":
+          description: OK
           schema:
-            type: string
+            $ref: '#/definitions/types.GetUser'
         "401":
           description: Unauthorized
           schema:

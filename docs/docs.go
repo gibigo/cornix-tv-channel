@@ -20,7 +20,7 @@ var doc = `{
         "title": "{{.Title}}",
         "contact": {},
         "license": {
-            "name": "MIT",
+            "name": "GPLv3",
             "url": "https://github.com/gibigo/cornix-tv-channel/blob/master/LICENSE"
         },
         "version": "{{.Version}}"
@@ -89,13 +89,165 @@ var doc = `{
                 "summary": "Create a channel",
                 "parameters": [
                     {
-                        "description": "User to create",
-                        "name": "user",
+                        "description": "Channel to create",
+                        "name": "channel",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/types.AddUser"
+                            "$ref": "#/definitions/types.AddChannel"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Channel"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/channels/{channel_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get a spectific channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channels"
+                ],
+                "summary": "Get a spectific channel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Channel ID",
+                        "name": "channel_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Channel"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Change the telegram id of a channel and keep all related strategies",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channels"
+                ],
+                "summary": "Update a channel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Channel ID",
+                        "name": "channel_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Channel to create",
+                        "name": "channel",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/types.UpdateChannel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Channel"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete a channel and all related strategies",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channels"
+                ],
+                "summary": "Delete a channel",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Channel ID",
+                        "name": "channel_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -111,8 +263,8 @@ var doc = `{
                             "type": "string"
                         }
                     },
-                    "409": {
-                        "description": "Conflict",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/utils.HTTPError"
                         }
@@ -277,10 +429,10 @@ var doc = `{
                     }
                 ],
                 "responses": {
-                    "204": {
-                        "description": "No Content",
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/types.GetUser"
                         }
                     },
                     "401": {
@@ -344,6 +496,17 @@ var doc = `{
         }
     },
     "definitions": {
+        "types.AddChannel": {
+            "type": "object",
+            "required": [
+                "telegramId"
+            ],
+            "properties": {
+                "telegramId": {
+                    "type": "integer"
+                }
+            }
+        },
         "types.AddStrategy": {
             "type": "object",
             "properties": {
@@ -519,6 +682,17 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/types.TP"
                     }
+                }
+            }
+        },
+        "types.UpdateChannel": {
+            "type": "object",
+            "required": [
+                "telegramId"
+            ],
+            "properties": {
+                "telegramId": {
+                    "type": "integer"
                 }
             }
         },
