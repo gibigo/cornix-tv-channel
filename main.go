@@ -62,6 +62,6 @@ func loadConfiguration() *config.Config {
 // @version 1.0
 // @host https://yourforwarder.io
 // @BasePath /api/v1
-// @license.name MIT
+// @license.name GPLv3
 // @license.url https://github.com/gibigo/cornix-tv-channel/blob/master/LICENSE
 // @securityDefinitions.basic BasicAuth
