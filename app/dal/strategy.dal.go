@@ -44,15 +44,15 @@ type Entry struct {
 type TP struct {
 	gorm.Model
 	Diff             float64
-	TargetStrategyID uint
-	ZoneStrategyID   uint
+	TargetStrategyID *uint
+	ZoneStrategyID   *uint
 }
 
 type SL struct {
 	gorm.Model
 	Diff             float64
-	TargetStrategyID uint
-	ZoneStrategyID   uint
+	TargetStrategyID *uint
+	ZoneStrategyID   *uint
 }
 
 /* // maybe rewrite this, could be an old issue, not sure tho
@@ -85,5 +85,5 @@ func FindStrategy(dest interface{}, conds ...interface{}) *gorm.DB {
 }
 
 func CreateStrategy(strategy interface{}) *gorm.DB {
-	return database.DB.Debug().Create(strategy)
+	return database.DB.Create(strategy)
 }
