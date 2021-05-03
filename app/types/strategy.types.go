@@ -1,15 +1,12 @@
 package types
 
 type Strategy struct {
-	ID               uint
-	AllowCounter     bool
-	Coin             string
-	IsTargetStrategy bool
-	TargetStrategy   *TargetStrategy
-	IsZoneStrategy   bool
-	ZoneStrategy     *ZoneStrategy
-	UserID           uint
-	ChannelID        uint
+	ID             uint
+	AllowCounter   bool
+	Symbol         string
+	TargetStrategy *TargetStrategy
+	ZoneStrategy   *ZoneStrategy
+	ChannelID      uint
 }
 
 type ZoneStrategy struct {
@@ -35,7 +32,7 @@ type Entry struct {
 	ID               uint
 	Diff             float64
 	TargetStrategyID uint
-	ZoneStrategyID   uint `json:",omitempty"`
+	ZoneStrategyID   uint
 }
 
 type TP struct {
@@ -52,32 +49,45 @@ type SL struct {
 	ZoneStrategyID   uint
 }
 
-/* type Entry struct {
-	Diff       float32 `json:"diff"`
-	StrategyID int64   `json:",omitempty"` // maybe remove this
+/* type Strategy struct {
+	AllowCounter   bool
+	Symbol         string
+	TargetStrategy *TargetStrategy
+	ZoneStrategy   *ZoneStrategy
+}
+
+type ZoneStrategy struct {
+	EntryStart float64
+	EntryStop  float64
+	TPs        []*TP
+	SL         *SL
+	IsBreakout bool
+}
+
+type TargetStrategy struct {
+	ID         uint
+	Entries    []*Entry
+	TPs        []*TP
+	SL         *SL
+	IsBreakout bool
+}
+
+type Entry struct {
+	Diff             float64
+	TargetStrategyID uint
 }
 
 type TP struct {
-	Diff       float32 `json:"diff"`
-	StrategyID int64   `json:",omitempty"`
+	Diff float64
 }
 
 type SL struct {
-	Diff       float32 `json:"diff"`
-	StrategyID int64   `json:",omitempty"`
-}
+	Diff float64
+} */
 
-type Strategy struct {
-	ID           int64    `json:"id,omitempty"`
-	AllowCounter bool     `json:"allowCounter"`
-	Entries      []*Entry `json:"entires"`
-	TPs          []*TP    `json:"tps"`
-	SL           *SL      `json:"sl"`
-}
-*/
 type AddStrategy struct {
-	AllowCounter bool     `json:"allowCounter"`
-	Entries      []*Entry `json:"entires"`
-	TPs          []*TP    `json:"tps"`
-	SL           *SL      `json:"sl"`
+	Symbol         string          `json:"symbol" validate:"required"`
+	AllowCounter   bool            `json:"allowCounter"`
+	TargetStrategy *TargetStrategy `json:"targetStrategy,omitempty"`
+	ZoneStrategy   *ZoneStrategy   `json:"zoneStrategy,omitempty"`
 }

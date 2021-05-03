@@ -25,10 +25,9 @@ func registerUsers(api fiber.Router) {
 }
 
 // register strategy endpoints
-// TODO
 func registerStrategies(api fiber.Router) {
 	v1 := api.Group("/v1")
-	str := v1.Group("/strategies").Use(middleware.BasicAuth)
+	str := v1.Group("/channels/:channel/strategies").Use(middleware.BasicAuth)
 
 	//str.Get("/", s.GetStrategies)
 	str.Post("/", s.CreateStrategy)

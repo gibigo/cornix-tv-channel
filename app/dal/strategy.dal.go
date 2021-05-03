@@ -8,12 +8,11 @@ import (
 type Strategy struct {
 	gorm.Model
 	AllowCounter     bool
-	Coin             string
+	Symbol           string
 	IsTargetStrategy bool
-	TargetStrategy   *TargetStrategy
+	TargetStrategy   *TargetStrategy `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	IsZoneStrategy   bool
-	ZoneStrategy     *ZoneStrategy
-	UserID           uint
+	ZoneStrategy     *ZoneStrategy `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	ChannelID        uint
 }
 
@@ -21,43 +20,42 @@ type ZoneStrategy struct {
 	gorm.Model
 	EntryStart float64
 	EntryStop  float64
-	TPs        []*TP
-	SL         *SL
+	TPs        []*TP `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	SL         *SL   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	IsBreakout bool
 	StrategyID uint
 }
 
 type TargetStrategy struct {
 	gorm.Model
-	Entries    []*Entry `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"gt=0,dive,required"`
-	TPs        []*TP    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"gt=0,dive,required"`
-	SL         *SL      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" validate:"required,dive,required"`
+	Entries    []*Entry `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	TPs        []*TP    `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	SL         *SL      `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	IsBreakout bool
 	StrategyID uint
 }
 
 type Entry struct {
 	gorm.Model
-	Diff             float64 `validate:"required"`
+	Diff             float64
 	TargetStrategyID uint
-	ZoneStrategyID   uint
 }
 
 type TP struct {
 	gorm.Model
-	Diff             float64 `validate:"required"`
+	Diff             float64
 	TargetStrategyID uint
 	ZoneStrategyID   uint
 }
 
 type SL struct {
 	gorm.Model
-	Diff             float64 `validate:"required"`
+	Diff             float64
 	TargetStrategyID uint
 	ZoneStrategyID   uint
 }
 
-// maybe rewrite this, could be an old issue, not sure tho
+/* // maybe rewrite this, could be an old issue, not sure tho
 func FindStrategy(dest interface{}, query interface{}, conds ...interface{}) *gorm.DB {
 	return database.DB.Table("strategies").Where(query, conds...).
 		Joins("JOIN entries ON entries.strategy_id = strategies.id").
@@ -75,4 +73,17 @@ func FindStrategyByID(dest interface{}, id int64) *gorm.DB {
 
 func CreateStrategy(strategy *Strategy) *gorm.DB {
 	return database.DB.Create(strategy)
+}
+*/
+
+func FindStrategyBySymbol(dest interface{}, symbol string, channelID interface{}) *gorm.DB {
+	return FindStrategy(dest, "symbol = ? AND channel_id = ?", symbol, channelID)
+}
+
+func FindStrategy(dest interface{}, conds ...interface{}) *gorm.DB {
+	return database.DB.Model(&Strategy{}).Take(dest, conds...)
+}
+
+func CreateStrategy(strategy interface{}) *gorm.DB {
+	return database.DB.Debug().Create(strategy)
 }

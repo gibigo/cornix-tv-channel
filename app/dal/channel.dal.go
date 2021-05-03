@@ -17,8 +17,8 @@ func FindChannelByTelegramId(dest interface{}, telegramID int64) *gorm.DB {
 	return FindChannel(dest, "telegram = ?", telegramID)
 }
 
-func FindChannel(dest interface{}, conds ...interface{}) *gorm.DB {
-	return database.DB.Model(&Channel{}).Take(dest, conds...)
+func FindChannel(dest interface{}, query string, args ...interface{}) *gorm.DB {
+	return database.DB.Model(&Channel{}).Where(query, args...).Take(dest)
 }
 
 func CreateChannel(channel *Channel) *gorm.DB {
