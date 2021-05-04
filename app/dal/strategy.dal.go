@@ -7,13 +7,11 @@ import (
 
 type Strategy struct {
 	gorm.Model
-	AllowCounter     bool
-	Symbol           string
-	IsTargetStrategy bool
-	TargetStrategy   *TargetStrategy `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	IsZoneStrategy   bool
-	ZoneStrategy     *ZoneStrategy `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	ChannelID        uint
+	AllowCounter   bool
+	Symbol         string
+	TargetStrategy *TargetStrategy `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	ZoneStrategy   *ZoneStrategy   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	ChannelID      uint
 }
 
 type ZoneStrategy struct {
@@ -86,4 +84,14 @@ func FindStrategy(dest interface{}, conds ...interface{}) *gorm.DB {
 
 func CreateStrategy(strategy interface{}) *gorm.DB {
 	return database.DB.Create(strategy)
+}
+
+func FindAllStrategiesFromChannel(dest interface{}, channelID interface{}) *gorm.DB {
+	//return database.DB.Debug().Select("*").Joins("JOIN target_strategies ON target_strategies.strategy_id = strategies.id").Where("channel_id = ?", channelID).Find(dest)
+	return database.DB.Debug().
+		Preload("TargetStrategy").
+		Preload("TargetStrategy.Entries").Preload("TargetStrategy.TPs").Preload("TargetStrategy.SL").
+		Preload("ZoneStrategy").
+		Preload("ZoneStrategy.TPs").Preload("ZoneStrategy.SL").
+		Find(dest)
 }

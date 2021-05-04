@@ -1,52 +1,51 @@
 package types
 
 type Strategy struct {
-	ID             uint
+	ID             uint `json:"-"`
 	AllowCounter   bool
 	Symbol         string
 	TargetStrategy *TargetStrategy
 	ZoneStrategy   *ZoneStrategy
-	ChannelID      uint
+	ChannelID      uint `json:"-"`
 }
 
 type ZoneStrategy struct {
-	ID         uint
+	ID         uint `json:"-"`
 	EntryStart float64
 	EntryStop  float64
 	TPs        []*TP
 	SL         *SL
 	IsBreakout bool
-	StrategyID uint
+	StrategyID uint `json:"-"`
 }
 
 type TargetStrategy struct {
-	ID         uint
+	ID         uint `json:"-"`
 	Entries    []*Entry
 	TPs        []*TP
 	SL         *SL
 	IsBreakout bool
-	StrategyID uint
+	StrategyID uint `json:"-"`
 }
 
 type Entry struct {
-	ID               uint
+	ID               uint `json:"-"`
 	Diff             float64
-	TargetStrategyID uint
-	ZoneStrategyID   uint
+	TargetStrategyID uint `json:"-"`
 }
 
 type TP struct {
-	ID               uint
+	ID               uint `json:"-"`
 	Diff             float64
-	TargetStrategyID uint
-	ZoneStrategyID   uint
+	TargetStrategyID uint `json:"-"`
+	ZoneStrategyID   uint `json:"-"`
 }
 
 type SL struct {
-	ID               uint
+	ID               uint `json:"-"`
 	Diff             float64
-	TargetStrategyID uint
-	ZoneStrategyID   uint
+	TargetStrategyID uint `json:"-"`
+	ZoneStrategyID   uint `json:"-"`
 }
 
 /* type Strategy struct {

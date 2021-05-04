@@ -29,7 +29,7 @@ func registerStrategies(api fiber.Router) {
 	v1 := api.Group("/v1")
 	str := v1.Group("/channels/:channel/strategies").Use(middleware.BasicAuth)
 
-	//str.Get("/", s.GetStrategies)
+	str.Get("/", s.GetStrategies)
 	str.Post("/", s.CreateStrategy)
 	//str.Delete("/", s.DeleteStrategy)
 }

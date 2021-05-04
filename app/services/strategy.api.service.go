@@ -84,26 +84,66 @@ func CreateStrategy(c *fiber.Ctx) error {
 	return c.JSON(strategy)
 }
 
-func convertStrategyStruct(strategy types.AddStrategy, channel uint) *dal.Strategy {
+// @Summary Get all strategies
+// @Description Get all strategies for a particular channel
+// @Security BasicAuth
+// @Tags strategies
+// @Accept  json
+// @Produce  json
+// @Param channel_id path int true "Channel ID"
+// @Success 200 {array} types.Strategy
+// @Failure 401 {string} string
+// @Failure 404 {object} utils.HTTPError
+// @Router /channels/{channel_id}/strategies [get]
+func GetStrategies(c *fiber.Ctx) error {
 
+	// define logger for this function
+	logger := logging.Log.WithFields(log.Fields{
+		"function": "GetChannels",
+		"package":  "services",
+	})
+
+	// check if the channel exists
+	var checkChannel types.Channel
+	result := dal.FindChannelFromUser(&checkChannel, c.Locals("username"), c.Params("channel"))
+	if result.Error != nil {
+		logger.Error(result.Error)
+		return utils.NewHTTPError(c, fiber.StatusInternalServerError, result.Error)
+	}
+	// return 404 if the channel does not exist or does not belong to the user
+	if result.RowsAffected == 0 {
+		return utils.NewHTTPError(c, fiber.StatusNotFound, fmt.Sprintf("user %s has no channel with id %s", c.Locals("username"), c.Params("channel")))
+	}
+
+	var strategies []types.Strategy
+	result = dal.FindAllStrategiesFromChannel(&strategies, checkChannel.ID)
+	if err := result.Error; err != nil {
+		logger.Error(err)
+		return utils.NewHTTPError(c, fiber.StatusInternalServerError, result.Error)
+	}
+
+	// return 404 if user has no channels configured
+	if result.RowsAffected == 0 {
+		return utils.NewHTTPError(c, fiber.StatusNotFound, fmt.Sprintf("no strategies found for channel with id %s", c.Params("channel")))
+	}
+
+	return c.JSON(strategies)
+}
+
+// helper function to convert structs
+func convertStrategyStruct(strategy types.AddStrategy, channel uint) *dal.Strategy {
 	// allocate memory
 	nStrategy := new(dal.Strategy)
-
 	// counter trade policy
 	nStrategy.AllowCounter = strategy.AllowCounter
-
 	// define the symbol
 	nStrategy.Symbol = strategy.Symbol
-
 	// set the channel id
 	nStrategy.ChannelID = channel
-
 	// set target strategy
 	if strategy.TargetStrategy != nil {
-
-		nStrategy.IsTargetStrategy = true
+		// allocate memory
 		nStrategy.TargetStrategy = new(dal.TargetStrategy)
-
 		// define entries
 		if strategy.TargetStrategy.Entries != nil {
 			nEntry := make([]*dal.Entry, len(strategy.TargetStrategy.Entries))
@@ -113,7 +153,6 @@ func convertStrategyStruct(strategy types.AddStrategy, channel uint) *dal.Strate
 			}
 			nStrategy.TargetStrategy.Entries = nEntry
 		}
-
 		// define take profits
 		if strategy.TargetStrategy.TPs != nil {
 			nTP := make([]*dal.TP, len(strategy.TargetStrategy.TPs))
@@ -123,30 +162,23 @@ func convertStrategyStruct(strategy types.AddStrategy, channel uint) *dal.Strate
 			}
 			nStrategy.TargetStrategy.TPs = nTP
 		}
-
 		// define take profits
 		if strategy.TargetStrategy.SL != nil {
 			nSL := new(dal.SL)
 			nSL.Diff = strategy.TargetStrategy.SL.Diff
 			nStrategy.TargetStrategy.SL = nSL
 		}
-
 		// set breakout
 		nStrategy.TargetStrategy.IsBreakout = strategy.TargetStrategy.IsBreakout
-
 		return nStrategy
 	}
-
 	// set zone strategy
 	if strategy.ZoneStrategy != nil {
-
-		nStrategy.IsZoneStrategy = true
+		// allocate memory
 		nStrategy.ZoneStrategy = new(dal.ZoneStrategy)
-
 		// set entry diffs
 		nStrategy.ZoneStrategy.EntryStart = strategy.ZoneStrategy.EntryStart
 		nStrategy.ZoneStrategy.EntryStop = strategy.ZoneStrategy.EntryStop
-
 		// define take profits
 		if strategy.ZoneStrategy.TPs != nil {
 			nTP := make([]*dal.TP, len(strategy.ZoneStrategy.TPs))
@@ -156,17 +188,14 @@ func convertStrategyStruct(strategy types.AddStrategy, channel uint) *dal.Strate
 			}
 			nStrategy.ZoneStrategy.TPs = nTP
 		}
-
 		// define take profits
 		if strategy.ZoneStrategy.SL != nil {
 			nSL := new(dal.SL)
 			nSL.Diff = strategy.ZoneStrategy.SL.Diff
 			nStrategy.ZoneStrategy.SL = nSL
 		}
-
 		// set breakout
 		nStrategy.TargetStrategy.IsBreakout = strategy.TargetStrategy.IsBreakout
-
 		return nStrategy
 	}
 	return nil
