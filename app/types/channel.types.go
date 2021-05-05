@@ -1,9 +1,9 @@
 package types
 
 type Channel struct {
-	ID       uint        `json:"id"`
-	Telegram int64       `json:"telegramId"`
-	Strategy []*Strategy `json:"strategies"`
+	ID       uint  `json:"id"`
+	Telegram int64 `json:"telegramId"`
+	//Strategy []*Strategy `json:"strategies"`
 }
 
 type AddChannel struct {
