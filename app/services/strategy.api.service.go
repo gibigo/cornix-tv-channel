@@ -74,60 +74,22 @@ func CreateStrategy(c *fiber.Ctx) error {
 
 	strategy := convertStrategyStruct(newStrategy, uint(channel))
 	if strategy == nil {
-		// TODO return error
+		err := fmt.Errorf("error while converting the struct")
+		logger.Error(err)
+		return utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
 	}
 
 	if err := dal.CreateStrategy(strategy).Error; err != nil {
 		logger.Error(err)
 		return utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
 	}
-	return c.JSON(strategy)
-}
 
-// @Summary Get all strategies
-// @Description Get all strategies for a particular channel
-// @Security BasicAuth
-// @Tags strategies
-// @Accept  json
-// @Produce  json
-// @Param channel_id path int true "Channel ID"
-// @Success 200 {array} types.Strategy
-// @Failure 401 {string} string
-// @Failure 404 {object} utils.HTTPError
-// @Router /channels/{channel_id}/strategies [get]
-func GetStrategies(c *fiber.Ctx) error {
-
-	// define logger for this function
-	logger := logging.Log.WithFields(log.Fields{
-		"function": "GetChannels",
-		"package":  "services",
-	})
-
-	// check if the channel exists
-	var checkChannel types.Channel
-	result := dal.FindChannelFromUser(&checkChannel, c.Locals("username"), c.Params("channel"))
-	if result.Error != nil {
-		logger.Error(result.Error)
-		return utils.NewHTTPError(c, fiber.StatusInternalServerError, result.Error)
+	var returnStrategy types.Strategy
+	if err := dal.FindStrategyByID(&returnStrategy, strategy.ChannelID, strategy.ID).Error; err != nil {
+		logger.Error("error while getting strategy after creating it", err)
+		return utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
 	}
-	// return 404 if the channel does not exist or does not belong to the user
-	if result.RowsAffected == 0 {
-		return utils.NewHTTPError(c, fiber.StatusNotFound, fmt.Sprintf("user %s has no channel with id %s", c.Locals("username"), c.Params("channel")))
-	}
-
-	var strategies []types.Strategy
-	result = dal.FindAllStrategiesFromChannel(&strategies, checkChannel.ID)
-	if err := result.Error; err != nil {
-		logger.Error(err)
-		return utils.NewHTTPError(c, fiber.StatusInternalServerError, result.Error)
-	}
-
-	// return 404 if user has no channels configured
-	if result.RowsAffected == 0 {
-		return utils.NewHTTPError(c, fiber.StatusNotFound, fmt.Sprintf("no strategies found for channel with id %s", c.Params("channel")))
-	}
-
-	return c.JSON(strategies)
+	return c.JSON(returnStrategy)
 }
 
 // helper function to convert structs
@@ -195,8 +157,54 @@ func convertStrategyStruct(strategy types.AddStrategy, channel uint) *dal.Strate
 			nStrategy.ZoneStrategy.SL = nSL
 		}
 		// set breakout
-		nStrategy.TargetStrategy.IsBreakout = strategy.TargetStrategy.IsBreakout
+		nStrategy.ZoneStrategy.IsBreakout = strategy.ZoneStrategy.IsBreakout
 		return nStrategy
 	}
 	return nil
+}
+
+// @Summary Get all strategies
+// @Description Get all strategies for a particular channel
+// @Security BasicAuth
+// @Tags strategies
+// @Accept  json
+// @Produce  json
+// @Param channel_id path int true "Channel ID"
+// @Success 200 {array} types.Strategy
+// @Failure 401 {string} string
+// @Failure 404 {object} utils.HTTPError
+// @Router /channels/{channel_id}/strategies [get]
+func GetStrategies(c *fiber.Ctx) error {
+
+	// define logger for this function
+	logger := logging.Log.WithFields(log.Fields{
+		"function": "GetChannels",
+		"package":  "services",
+	})
+
+	// check if the channel exists
+	var checkChannel types.Channel
+	result := dal.FindChannelFromUser(&checkChannel, c.Locals("username"), c.Params("channel"))
+	if result.Error != nil {
+		logger.Error(result.Error)
+		return utils.NewHTTPError(c, fiber.StatusInternalServerError, result.Error)
+	}
+	// return 404 if the channel does not exist or does not belong to the user
+	if result.RowsAffected == 0 {
+		return utils.NewHTTPError(c, fiber.StatusNotFound, fmt.Sprintf("user %s has no channel with id %s", c.Locals("username"), c.Params("channel")))
+	}
+
+	var strategies []types.Strategy
+	result = dal.FindAllStrategiesFromChannel(&strategies, checkChannel.ID)
+	if err := result.Error; err != nil {
+		logger.Error(err)
+		return utils.NewHTTPError(c, fiber.StatusInternalServerError, result.Error)
+	}
+
+	// return 404 if user has no channels configured
+	if result.RowsAffected == 0 {
+		return utils.NewHTTPError(c, fiber.StatusNotFound, fmt.Sprintf("no strategies found for channel with id %s", c.Params("channel")))
+	}
+
+	return c.JSON(strategies)
 }

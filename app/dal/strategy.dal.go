@@ -53,27 +53,6 @@ type SL struct {
 	ZoneStrategyID   *uint
 }
 
-/* // maybe rewrite this, could be an old issue, not sure tho
-func FindStrategy(dest interface{}, query interface{}, conds ...interface{}) *gorm.DB {
-	return database.DB.Table("strategies").Where(query, conds...).
-		Joins("JOIN entries ON entries.strategy_id = strategies.id").
-		Joins("JOIN tps ON tps.strategy_id = strategies.id").
-		Joins("JOIN sls ON sls.strategy_id = strategies.id").Select("strategies.id", "strategies.allow_counter", "entries.diff", "tps.diff", "sls.diff")
-}
-
-func FindAllStrategiesFromUser(dest interface{}, userID int64) *gorm.DB {
-	return FindStrategy(dest, "strategies.user_id = ?", userID)
-}
-
-func FindStrategyByID(dest interface{}, id int64) *gorm.DB {
-	return FindStrategy(dest, "strategies.id = ?", id)
-}
-
-func CreateStrategy(strategy *Strategy) *gorm.DB {
-	return database.DB.Create(strategy)
-}
-*/
-
 func FindStrategyBySymbol(dest interface{}, symbol string, channelID interface{}) *gorm.DB {
 	return FindStrategy(dest, "symbol = ? AND channel_id = ?", symbol, channelID)
 }
@@ -87,8 +66,18 @@ func CreateStrategy(strategy interface{}) *gorm.DB {
 }
 
 func FindAllStrategiesFromChannel(dest interface{}, channelID interface{}) *gorm.DB {
-	//return database.DB.Debug().Select("*").Joins("JOIN target_strategies ON target_strategies.strategy_id = strategies.id").Where("channel_id = ?", channelID).Find(dest)
-	return database.DB.Debug().
+	return database.DB.
+		Where("channel_id = ?", channelID).
+		Preload("TargetStrategy").
+		Preload("TargetStrategy.Entries").Preload("TargetStrategy.TPs").Preload("TargetStrategy.SL").
+		Preload("ZoneStrategy").
+		Preload("ZoneStrategy.TPs").Preload("ZoneStrategy.SL").
+		Find(dest)
+}
+
+func FindStrategyByID(dest interface{}, channelID interface{}, strategyID interface{}) *gorm.DB {
+	return database.DB.
+		Where("channel_id = ? AND id = ?", channelID, strategyID).
 		Preload("TargetStrategy").
 		Preload("TargetStrategy.Entries").Preload("TargetStrategy.TPs").Preload("TargetStrategy.SL").
 		Preload("ZoneStrategy").
