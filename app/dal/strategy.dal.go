@@ -53,7 +53,7 @@ type SL struct {
 	ZoneStrategyID   *uint
 }
 
-func FindStrategyBySymbol(dest interface{}, symbol string, channelID interface{}) *gorm.DB {
+func FindStrategyBySymbolSimple(dest interface{}, symbol string, channelID interface{}) *gorm.DB {
 	return FindStrategy(dest, "symbol = ? AND channel_id = ?", symbol, channelID)
 }
 
@@ -83,4 +83,18 @@ func FindStrategyByID(dest interface{}, channelID interface{}, strategyID interf
 		Preload("ZoneStrategy").
 		Preload("ZoneStrategy.TPs").Preload("ZoneStrategy.SL").
 		Find(dest)
+}
+
+func FindStrategyBySymbol(dest interface{}, channelID uint, symbol string) *gorm.DB {
+	return database.DB.
+		Where("channel_id = ? AND symbol = ?", channelID, symbol).
+		Preload("TargetStrategy").
+		Preload("TargetStrategy.Entries").Preload("TargetStrategy.TPs").Preload("TargetStrategy.SL").
+		Preload("ZoneStrategy").
+		Preload("ZoneStrategy.TPs").Preload("ZoneStrategy.SL").
+		Find(dest)
+}
+
+func DeleteStrategy(channelID string, symbol string) *gorm.DB {
+	return database.DB.Unscoped().Where("channel_id = ? AND symbol = ?", channelID, symbol).Delete(&Strategy{})
 }

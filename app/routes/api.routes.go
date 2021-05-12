@@ -31,7 +31,8 @@ func registerStrategies(api fiber.Router) {
 
 	str.Get("/", s.GetStrategies)
 	str.Post("/", s.CreateStrategy)
-	//str.Delete("/", s.DeleteStrategy)
+	str.Get("/:symbol", s.GetStrategy)
+	str.Delete("/:symbol", s.DeleteStrategy)
 }
 
 // register channel endpoints
