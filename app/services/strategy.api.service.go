@@ -177,7 +177,7 @@ func GetStrategies(c *fiber.Ctx) error {
 
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
-		"function": "GetChannels",
+		"function": "GetStrategies",
 		"package":  "services",
 	})
 
@@ -224,7 +224,7 @@ func GetStrategy(c *fiber.Ctx) error {
 
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
-		"function": "GetChannels",
+		"function": "GetStrategy",
 		"package":  "services",
 	})
 
@@ -271,7 +271,7 @@ func DeleteStrategy(c *fiber.Ctx) error {
 
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
-		"function": "DeleteChannel",
+		"function": "DeleteStrategy",
 		"package":  "services",
 	})
 
