@@ -5,8 +5,10 @@ import (
 	"io/fs"
 	"log"
 	"os"
+	"regexp"
 	"strings"
 
+	"github.com/gibigo/cornix-tv-channel/app/telegram"
 	"github.com/gibigo/cornix-tv-channel/config/database"
 	"github.com/gibigo/cornix-tv-channel/utils/logging"
 	"github.com/spf13/viper"
@@ -25,6 +27,7 @@ type Config struct {
 	AllowRegistrations bool             `mapstructure:"registration"`
 	Database           *database.Config `mapstructure:"database"`
 	Logging            *logging.Config  `mapstructure:"logging"`
+	telegram           *telegram.Config `mapstructure:"telegram"`
 }
 
 func Get() *Config {
@@ -64,6 +67,7 @@ func readConfiguration(fileName string) (config *Config, err error) {
 	viper.BindEnv("registration", "REGISTRATION")
 	viper.BindEnv("database.debug", "DATABASE_DEBUG")
 	viper.BindEnv("logging.logLevel", "LOG_LEVEL")
+	viper.BindEnv("telegram.token", "TELEGRAM_TOKEN")
 
 	viper.SetDefault("database.debug", false)
 	viper.SetDefault("logging.logLevel", "Info")
@@ -81,6 +85,7 @@ func readConfiguration(fileName string) (config *Config, err error) {
 	if err == nil {
 		validateGeneralConfig(config)
 		validateLoggingConfig(config)
+		validateTelegramConfig(config)
 	}
 	return
 }
@@ -97,5 +102,17 @@ func validateLoggingConfig(cfg *Config) {
 			!strings.EqualFold(logLevel, "Debug") {
 			panic("invalid logging configuration. Valid options: Warn, Info, Debug")
 		}
+	}
+}
+
+func validateTelegramConfig(cfg *Config) {
+	if cfg.telegram == nil {
+		panic("telegram config can't be nil")
+	}
+	if cfg.telegram.Token == "" {
+		panic("telegram token can't be empty")
+	}
+	if match, _ := regexp.MatchString(`[0-9]{9}:[a-zA-Z0-9_-]{35}`, cfg.telegram.Token); !match {
+		panic("telegram token is invalid")
 	}
 }
