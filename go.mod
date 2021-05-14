@@ -3,6 +3,7 @@ module github.com/gibigo/cornix-tv-channel
 go 1.16
 
 require (
+	github.com/PaulSonOfLars/gotgbot/v2 v2.0.0-beta9
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/arsmn/fiber-swagger/v2 v2.6.0
 	github.com/go-openapi/swag v0.19.15 // indirect

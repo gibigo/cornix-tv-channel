@@ -27,7 +27,7 @@ type Config struct {
 	AllowRegistrations bool             `mapstructure:"registration"`
 	Database           *database.Config `mapstructure:"database"`
 	Logging            *logging.Config  `mapstructure:"logging"`
-	telegram           *telegram.Config `mapstructure:"telegram"`
+	Telegram           *telegram.Config `mapstructure:"telegram"`
 }
 
 func Get() *Config {
@@ -106,13 +106,13 @@ func validateLoggingConfig(cfg *Config) {
 }
 
 func validateTelegramConfig(cfg *Config) {
-	if cfg.telegram == nil {
+	if cfg.Telegram == nil {
 		panic("telegram config can't be nil")
 	}
-	if cfg.telegram.Token == "" {
+	if cfg.Telegram.Token == "" {
 		panic("telegram token can't be empty")
 	}
-	if match, _ := regexp.MatchString(`[0-9]{9}:[a-zA-Z0-9_-]{35}`, cfg.telegram.Token); !match {
+	if match, _ := regexp.MatchString(`[0-9]{9}:[a-zA-Z0-9_-]{35}`, cfg.Telegram.Token); !match {
 		panic("telegram token is invalid")
 	}
 }

@@ -37,6 +37,9 @@ func main() {
 	}
 	database.Migrate(tables...)
 
+	// create the telegram bot
+	cfg.Telegram.NewBot()
+
 	// lets fire up the API
 	app := fiber.New()
 	routes.SetupRoutes(app)
