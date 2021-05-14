@@ -95,6 +95,16 @@ func FindStrategyBySymbol(dest interface{}, channelID uint, symbol string) *gorm
 		Find(dest)
 }
 
+func FindDefaultStrategy(dest interface{}, channelID uint) *gorm.DB {
+	return database.DB.
+		Where("channel_id = ? AND symbol = ?", channelID, "all").
+		Preload("TargetStrategy").
+		Preload("TargetStrategy.Entries").Preload("TargetStrategy.TPs").Preload("TargetStrategy.SL").
+		Preload("ZoneStrategy").
+		Preload("ZoneStrategy.TPs").Preload("ZoneStrategy.SL").
+		Find(dest)
+}
+
 func DeleteStrategy(channelID string, symbol string) *gorm.DB {
 	return database.DB.Unscoped().Where("channel_id = ? AND symbol = ?", channelID, symbol).Delete(&Strategy{})
 }
