@@ -26,6 +26,10 @@ func FindUserByName(dest interface{}, username interface{}) *gorm.DB {
 	return FindUser(dest, "name = ?", username)
 }
 
+func FindUserByUUID(dest interface{}, username interface{}, uuid interface{}) *gorm.DB {
+	return FindUser(dest, "name = ? AND uuid = ?", username, uuid)
+}
+
 func DeleteUser(username interface{}) *gorm.DB {
 	return database.DB.Unscoped().Where("name = ?", username).Delete(&User{})
 }
