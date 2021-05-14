@@ -4,6 +4,8 @@
 
 # data
 database.db
+config/config.yml
 
 # other
 notes.txt
+
