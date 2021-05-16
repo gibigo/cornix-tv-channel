@@ -4,6 +4,7 @@ type Strategy struct {
 	ID             uint            `json:"-"`
 	AllowCounter   bool            `json:"allowCounter"`
 	Symbol         string          `json:"symbol"`
+	Leverage       uint            `json:"leverage"`
 	TargetStrategy *TargetStrategy `json:"targetStrategy,omitempty"`
 	ZoneStrategy   *ZoneStrategy   `json:"zoneStrategy,omitempty"`
 	ChannelID      uint            `json:"-"`
@@ -51,6 +52,7 @@ type SL struct {
 type AddStrategy struct {
 	Symbol         string          `json:"symbol" validate:"required"`
 	AllowCounter   bool            `json:"allowCounter"`
+	Leverage       uint            `json:"leverage,omitempty"`
 	TargetStrategy *TargetStrategy `json:"targetStrategy,omitempty"`
 	ZoneStrategy   *ZoneStrategy   `json:"zoneStrategy,omitempty"`
 }

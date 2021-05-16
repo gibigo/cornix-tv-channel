@@ -99,6 +99,8 @@ func convertStrategyStruct(strategy types.AddStrategy, channel uint) *dal.Strate
 	nStrategy.AllowCounter = strategy.AllowCounter
 	// define the symbol
 	nStrategy.Symbol = strategy.Symbol
+	// set the leverage
+	nStrategy.Leverage = strategy.Leverage
 	// set the channel id
 	nStrategy.ChannelID = channel
 	// set target strategy

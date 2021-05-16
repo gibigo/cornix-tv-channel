@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/gibigo/cornix-tv-channel/app/dal"
 	"github.com/gibigo/cornix-tv-channel/app/telegram"
@@ -14,7 +15,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// add swagger docs
+// TODO add swagger docs
 
 func TriggerWebhook(c *fiber.Ctx) error {
 
@@ -55,6 +56,8 @@ func TriggerWebhook(c *fiber.Ctx) error {
 	// set direction to long if the string is empty
 	if newSignal.Direction == "" {
 		newSignal.Direction = "long"
+	} else if !strings.EqualFold(newSignal.Direction, "long") && !strings.EqualFold(newSignal.Direction, "short") {
+		newSignal.Direction = "long"
 	}
 
 	// check if trade for same direction is open
@@ -84,53 +87,182 @@ func TriggerWebhook(c *fiber.Ctx) error {
 		}
 	}
 
-	// allocate memory for the new message and counter
+	// allocate memory for the new message and counterPolicy
 	var message string
-	var counter bool
+	var counterPolicy bool
 
 	// check if there is an open trade
 	if prevSignal.Symbol != "" {
 		// if there is an open trade, check if the new signal may overwrite it
-		if prevSignal.Direction == "long" && newSignal.Direction == "short" && strategy.AllowCounter {
-			counter = true
-			// generate signal message
-			message = generateSignal(newSignal.Symbol, newSignal.Price, strategy)
+		if !strings.EqualFold(prevSignal.Direction, newSignal.Direction) && strategy.AllowCounter {
+			counterPolicy = true
+		} else if strings.EqualFold(prevSignal.Direction, newSignal.Direction) {
+			return utils.NewHTTPError(c, fiber.StatusConflict, fmt.Sprintf("there is already an open trade for %s", newSignal.Symbol))
 		} else {
-			return utils.NewHTTPError(c, fiber.StatusNotAcceptable, fmt.Sprintf("counter trades aren't allowed for %s", strategy.Symbol))
+			return utils.NewHTTPError(c, fiber.StatusNotAcceptable, fmt.Sprintf("counter trades aren't allowed for %s", newSignal.Symbol))
 		}
-	} else {
-		// generate signal message
-		message = generateSignal(newSignal.Symbol, newSignal.Price, strategy)
 	}
+
+	// generate signal message
+	message = genSignalForTelegram(newSignal, strategy)
 
 	// send message(s) to telegram channel
-	if counter {
-		// TODO send cancel message to telegram
-		telegram.Bot.SendMessage(channel.Telegram, "counter", nil)
+	if counterPolicy {
+		if err := sendCancelMessage(newSignal.Symbol, channel.Telegram); err != nil {
+			logger.Error("error while sending cancel message: %s", err)
+			return utils.NewHTTPError(c, fiber.StatusInternalServerError, fmt.Sprintf("error while sending cancel message: %s", err))
+		}
+		if err := dal.DeleteSignal(channel.ID, newSignal.Symbol).Error; err != nil {
+			logger.Errorf("error while removing canceled signal from database: %s", err)
+			return utils.NewHTTPError(c, fiber.StatusInternalServerError, fmt.Sprintf("error while removing canceled signal from database: %s", err))
+		}
 	}
-	// TODO send telegram message
-	fmt.Println(message)
 
-	logger.Info(newSignal)
+	// send telegram message
+	if err := sendSignalMessage(message, channel.Telegram); err != nil {
+		logger.Error("error while sending signal message: %s", err)
+		return utils.NewHTTPError(c, fiber.StatusInternalServerError, fmt.Sprintf("error while sending signal message: %s", err))
+	}
+
+	// insert signal into database
+	if err := dal.CreateSignal(genSignalForDatabase(newSignal, channel)).Error; err != nil {
+		logger.Error("error while inserting new signal: %s", err)
+		return utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
+	}
+
 	return c.JSON(newSignal)
 }
 
+func sendSignalMessage(m string, channelID int64) error {
+	_, err := telegram.Bot.SendMessage(channelID, m, nil)
+	return err
+}
+
+func sendCancelMessage(symbol string, channelID int64) error {
+	_, err := telegram.Bot.SendMessage(channelID, fmt.Sprintf("❌ Cancel #%s", symbol), nil)
+	return err
+}
+
+func genSignalForDatabase(s types.TVSignal, c dal.Channel) *dal.TVSignal {
+	var newSignal dal.TVSignal
+	newSignal.Price = s.Price
+	newSignal.Symbol = s.Symbol
+	newSignal.Direction = s.Direction
+	newSignal.Exchange = s.Exchange
+	newSignal.ChannelID = c.ID
+	return &newSignal
+}
+
 // WIP
-func generateSignal(symbol string, price float64, strategy dal.Strategy) string {
-	genEntry(price, strategy)
-	genTP(price, strategy)
-	genSL(price, strategy)
-	return ""
+func genSignalForTelegram(s types.TVSignal, strategy dal.Strategy) string {
+
+	msg := fmt.Sprintf("⚡️⚡️ %s ⚡️⚡️\nExchange: %s\nDirection: %s\n", s.Symbol, s.Exchange, s.Direction)
+	if strategy.Leverage != 0 {
+		msg += fmt.Sprintf("Leverage: %dx\n", strategy.Leverage)
+	}
+	msg += genEntry(s.Price, s.Direction, strategy)
+	msg += genTP(s.Price, s.Direction, strategy)
+	msg += genSL(s.Price, s.Direction, strategy)
+	return msg
 }
 
-func genEntry(price float64, strategy dal.Strategy) string {
-	return ""
+func genEntry(price float64, direction string, strategy dal.Strategy) string {
+	var msg string
+	if strategy.TargetStrategy != nil {
+		msg = "\nEntry orders:\n"
+
+		if strings.EqualFold(direction, "long") {
+			for i, v := range strategy.TargetStrategy.Entries {
+				t := price + (price * (v.Diff / 100))
+				msg += fmt.Sprintf("%d) %f\n", i+1, t)
+			}
+		} else if strings.EqualFold(direction, "short") {
+			for i, v := range strategy.TargetStrategy.Entries {
+				t := price - (price * (v.Diff / 100))
+				msg += fmt.Sprintf("%d) %f\n", i+1, t)
+			}
+		}
+	} else if strategy.ZoneStrategy != nil {
+		if strategy.ZoneStrategy.IsBreakout {
+			// TODO add support for breakout
+		} else {
+			if strings.EqualFold(direction, "long") {
+				t1 := price + (price * (strategy.ZoneStrategy.EntryStart / 100))
+				t2 := price + (price * (strategy.ZoneStrategy.EntryStop / 100))
+				msg = fmt.Sprintf("\nEntry zone %f-%f\n", t1, t2)
+			} else if strings.EqualFold(direction, "short") {
+				t1 := price - (price * (strategy.ZoneStrategy.EntryStart / 100))
+				t2 := price - (price * (strategy.ZoneStrategy.EntryStop / 100))
+				msg = fmt.Sprintf("\nEntry zone %f-%f\n", t1, t2)
+			}
+		}
+	}
+	return msg
 }
 
-func genTP(price float64, strategy dal.Strategy) string {
-	return ""
+func genTP(price float64, direction string, strategy dal.Strategy) string {
+	var msg string
+	if strategy.TargetStrategy != nil {
+		msg = "\nTake-Profit orders:\n"
+
+		if strings.EqualFold(direction, "long") {
+			for i, v := range strategy.TargetStrategy.TPs {
+				t := price + (price * (v.Diff / 100))
+				msg += fmt.Sprintf("%d) %f\n", i+1, t)
+			}
+		} else if strings.EqualFold(direction, "short") {
+			for i, v := range strategy.TargetStrategy.TPs {
+				t := price - (price * (v.Diff / 100))
+				msg += fmt.Sprintf("%d) %f\n", i+1, t)
+			}
+		}
+	} else if strategy.ZoneStrategy != nil {
+		msg = "\nTake-Profit orders:\n"
+
+		if strings.EqualFold(direction, "long") {
+			for i, v := range strategy.ZoneStrategy.TPs {
+				t := price + (price * (v.Diff / 100))
+				msg += fmt.Sprintf("%d) %f\n", i+1, t)
+			}
+		} else if strings.EqualFold(direction, "short") {
+			for i, v := range strategy.ZoneStrategy.TPs {
+				t := price - (price * (v.Diff / 100))
+				msg += fmt.Sprintf("%d) %f\n", i+1, t)
+			}
+		}
+	}
+	return msg
 }
 
-func genSL(price float64, strategy dal.Strategy) string {
-	return ""
+func genSL(price float64, direction string, strategy dal.Strategy) string {
+	var msg string
+	if strategy.TargetStrategy != nil {
+		msg = "\nStop-Loss orders:\n"
+		if strings.EqualFold(direction, "long") {
+			if strategy.TargetStrategy.SL != nil {
+				t := price - (price * (strategy.TargetStrategy.SL.Diff / 100))
+				msg += fmt.Sprintf("1) %f\n", t)
+			}
+		} else if strings.EqualFold(direction, "short") {
+			if strategy.TargetStrategy.SL != nil {
+				t := price + (price * (strategy.TargetStrategy.SL.Diff / 100))
+				msg += fmt.Sprintf("1) %f\n", t)
+			}
+		}
+
+	} else if strategy.ZoneStrategy != nil {
+		msg = "\nStop-Loss orders:\n"
+		if strings.EqualFold(direction, "long") {
+			if strategy.ZoneStrategy.SL != nil {
+				t := price - (price * (strategy.ZoneStrategy.SL.Diff / 100))
+				msg += fmt.Sprintf("1) %f\n", t)
+			}
+		} else if strings.EqualFold(direction, "short") {
+			if strategy.ZoneStrategy.SL != nil {
+				t := price + (price * (strategy.ZoneStrategy.SL.Diff / 100))
+				msg += fmt.Sprintf("1) %f\n", t)
+			}
+		}
+	}
+	return msg
 }
