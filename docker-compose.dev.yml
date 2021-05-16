@@ -1,0 +1,16 @@
+---
+version: '3.7'
+services:
+    cornix-tv-channel:
+        build: 
+            context: .
+            dockerfile: Dockerfile.dev
+        restart: unless-stopped
+        hostname: cornix-tv-channel
+        container_name: cornix-tv-channel
+        volumes:
+            - ./data:/data
+        env_file:
+            - .env 
+        ports:
+            - 3000:3000

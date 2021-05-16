@@ -9,7 +9,7 @@ RUN go build -o cornix-tv-channel -ldflags="-s" .
 # compress the binary
 RUN upx -9 -k cornix-tv-channel
 
-# build the runtime image (apline because of cgo dependecies)
+# build an empty container
 FROM alpine:latest
 COPY --from=builder /app/cornix-tv-channel .
 EXPOSE 3000

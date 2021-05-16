@@ -1,0 +1,18 @@
+---
+version: '3.7'
+services:
+    cornix-tv-channel:
+        image: jon4hz/cornix-tv-channel
+        restart: unless-stopped
+        hostname: cornix-tv-channel
+        container_name: cornix-tv-channel
+        volumes:
+            - ./data:/data
+        env_file:
+            - .env 
+        networks: 
+            traefik_proxy:
+
+networks:
+    traefik_proxy:
+        external: true

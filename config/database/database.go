@@ -25,7 +25,7 @@ func Connect(config *Config) {
 		gormConfig.QueryFields = true
 	}
 
-	DB, err = gorm.Open(sqlite.Open("database.db"), gormConfig)
+	DB, err = gorm.Open(sqlite.Open("data/database.db"), gormConfig)
 	if err != nil {
 		panic(fmt.Sprintf("[database][init] error: %s", err))
 	}

@@ -1,6 +1,7 @@
 # meta
 .idea
 .vscode
+.github
 
 # data
 data/database.db
@@ -9,4 +10,3 @@ config/config.yml
 
 # other
 notes.txt
-
