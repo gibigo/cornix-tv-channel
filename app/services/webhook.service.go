@@ -109,7 +109,7 @@ func TriggerWebhook(c *fiber.Ctx) error {
 	// send message(s) to telegram channel
 	if counterPolicy {
 		if err := sendCancelMessage(newSignal.Symbol, channel.Telegram); err != nil {
-			logger.Error("error while sending cancel message: %s", err)
+			logger.Errorf("error while sending cancel message: %s", err)
 			return utils.NewHTTPError(c, fiber.StatusInternalServerError, fmt.Sprintf("error while sending cancel message: %s", err))
 		}
 		if err := dal.DeleteSignal(channel.ID, newSignal.Symbol).Error; err != nil {
@@ -120,13 +120,13 @@ func TriggerWebhook(c *fiber.Ctx) error {
 
 	// send telegram message
 	if err := sendSignalMessage(message, channel.Telegram); err != nil {
-		logger.Error("error while sending signal message: %s", err)
+		logger.Errorf("error while sending signal message: %s", err)
 		return utils.NewHTTPError(c, fiber.StatusInternalServerError, fmt.Sprintf("error while sending signal message: %s", err))
 	}
 
 	// insert signal into database
 	if err := dal.CreateSignal(genSignalForDatabase(newSignal, channel)).Error; err != nil {
-		logger.Error("error while inserting new signal: %s", err)
+		logger.Errorf("error while inserting new signal: %s", err)
 		return utils.NewHTTPError(c, fiber.StatusInternalServerError, err)
 	}
 
