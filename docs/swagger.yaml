@@ -11,16 +11,16 @@ definitions:
     properties:
       allowCounter:
         type: boolean
-      entires:
-        items:
-          $ref: '#/definitions/types.Entry'
-        type: array
-      sl:
-        $ref: '#/definitions/types.SL'
-      tps:
-        items:
-          $ref: '#/definitions/types.TP'
-        type: array
+      leverage:
+        type: integer
+      symbol:
+        type: string
+      targetStrategy:
+        $ref: '#/definitions/types.TargetStrategy'
+      zoneStrategy:
+        $ref: '#/definitions/types.ZoneStrategy'
+    required:
+    - symbol
     type: object
   types.AddUser:
     properties:
@@ -36,10 +36,6 @@ definitions:
     properties:
       id:
         type: integer
-      strategies:
-        items:
-          $ref: '#/definitions/types.Strategy'
-        type: array
       telegramId:
         type: integer
     type: object
@@ -47,12 +43,6 @@ definitions:
     properties:
       diff:
         type: number
-      id:
-        type: integer
-      targetStrategyID:
-        type: integer
-      zoneStrategyID:
-        type: integer
     type: object
   types.GetUser:
     properties:
@@ -65,31 +55,17 @@ definitions:
     properties:
       diff:
         type: number
-      id:
-        type: integer
-      targetStrategyID:
-        type: integer
-      zoneStrategyID:
-        type: integer
     type: object
   types.Strategy:
     properties:
       allowCounter:
         type: boolean
-      channelID:
+      leverage:
         type: integer
-      coin:
+      symbol:
         type: string
-      id:
-        type: integer
-      isTargetStrategy:
-        type: boolean
-      isZoneStrategy:
-        type: boolean
       targetStrategy:
         $ref: '#/definitions/types.TargetStrategy'
-      userID:
-        type: integer
       zoneStrategy:
         $ref: '#/definitions/types.ZoneStrategy'
     type: object
@@ -97,12 +73,6 @@ definitions:
     properties:
       diff:
         type: number
-      id:
-        type: integer
-      targetStrategyID:
-        type: integer
-      zoneStrategyID:
-        type: integer
     type: object
   types.TargetStrategy:
     properties:
@@ -110,14 +80,10 @@ definitions:
         items:
           $ref: '#/definitions/types.Entry'
         type: array
-      id:
-        type: integer
       isBreakout:
         type: boolean
       sl:
         $ref: '#/definitions/types.SL'
-      strategyID:
-        type: integer
       tps:
         items:
           $ref: '#/definitions/types.TP'
@@ -136,14 +102,10 @@ definitions:
         type: number
       entryStop:
         type: number
-      id:
-        type: integer
       isBreakout:
         type: boolean
       sl:
         $ref: '#/definitions/types.SL'
-      strategyID:
-        type: integer
       tps:
         items:
           $ref: '#/definitions/types.TP'
@@ -322,7 +284,39 @@ paths:
       summary: Update a channel
       tags:
       - channels
-  /strategies:
+  /channels/{channel_id}/strategies:
+    get:
+      consumes:
+      - application/json
+      description: Get all strategies for a particular channel
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channel_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Strategy'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      security:
+      - BasicAuth: []
+      summary: Get all strategies
+      tags:
+      - strategies
     post:
       consumes:
       - application/json
@@ -334,6 +328,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/types.AddStrategy'
+      - description: Channel ID
+        in: path
+        name: channel_id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -354,6 +353,42 @@ paths:
       summary: Create a new strategy
       tags:
       - strategies
+  /channels/{channel_id}/strategies/{strategy_symbol}:
+    get:
+      consumes:
+      - application/json
+      description: Delete a strategy for a particular symbol
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channel_id
+        required: true
+        type: integer
+      - description: Strategy Symbol, use 'all' for the default strategy
+        in: path
+        name: strategy_symbol
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      security:
+      - BasicAuth: []
+      summary: Delete a strategy
+      tags:
+      - channels
   /users:
     delete:
       consumes:

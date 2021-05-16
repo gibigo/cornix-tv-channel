@@ -272,7 +272,57 @@ var doc = `{
                 }
             }
         },
-        "/strategies": {
+        "/channels/{channel_id}/strategies": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Get all strategies for a particular channel",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "strategies"
+                ],
+                "summary": "Get all strategies",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Channel ID",
+                        "name": "channel_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.Strategy"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -299,6 +349,13 @@ var doc = `{
                         "schema": {
                             "$ref": "#/definitions/types.AddStrategy"
                         }
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Channel ID",
+                        "name": "channel_id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -318,6 +375,62 @@ var doc = `{
                         "description": "Unauthorized",
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/channels/{channel_id}/strategies/{strategy_symbol}": {
+            "get": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
+                "description": "Delete a strategy for a particular symbol",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "channels"
+                ],
+                "summary": "Delete a strategy",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Channel ID",
+                        "name": "channel_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Strategy Symbol, use 'all' for the default strategy",
+                        "name": "strategy_symbol",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
                         }
                     }
                 }
@@ -509,24 +622,24 @@ var doc = `{
         },
         "types.AddStrategy": {
             "type": "object",
+            "required": [
+                "symbol"
+            ],
             "properties": {
                 "allowCounter": {
                     "type": "boolean"
                 },
-                "entires": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/types.Entry"
-                    }
+                "leverage": {
+                    "type": "integer"
                 },
-                "sl": {
-                    "$ref": "#/definitions/types.SL"
+                "symbol": {
+                    "type": "string"
                 },
-                "tps": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/types.TP"
-                    }
+                "targetStrategy": {
+                    "$ref": "#/definitions/types.TargetStrategy"
+                },
+                "zoneStrategy": {
+                    "$ref": "#/definitions/types.ZoneStrategy"
                 }
             }
         },
@@ -551,12 +664,6 @@ var doc = `{
                 "id": {
                     "type": "integer"
                 },
-                "strategies": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/types.Strategy"
-                    }
-                },
                 "telegramId": {
                     "type": "integer"
                 }
@@ -567,15 +674,6 @@ var doc = `{
             "properties": {
                 "diff": {
                     "type": "number"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "targetStrategyID": {
-                    "type": "integer"
-                },
-                "zoneStrategyID": {
-                    "type": "integer"
                 }
             }
         },
@@ -595,15 +693,6 @@ var doc = `{
             "properties": {
                 "diff": {
                     "type": "number"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "targetStrategyID": {
-                    "type": "integer"
-                },
-                "zoneStrategyID": {
-                    "type": "integer"
                 }
             }
         },
@@ -613,26 +702,14 @@ var doc = `{
                 "allowCounter": {
                     "type": "boolean"
                 },
-                "channelID": {
+                "leverage": {
                     "type": "integer"
                 },
-                "coin": {
+                "symbol": {
                     "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "isTargetStrategy": {
-                    "type": "boolean"
-                },
-                "isZoneStrategy": {
-                    "type": "boolean"
                 },
                 "targetStrategy": {
                     "$ref": "#/definitions/types.TargetStrategy"
-                },
-                "userID": {
-                    "type": "integer"
                 },
                 "zoneStrategy": {
                     "$ref": "#/definitions/types.ZoneStrategy"
@@ -644,15 +721,6 @@ var doc = `{
             "properties": {
                 "diff": {
                     "type": "number"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "targetStrategyID": {
-                    "type": "integer"
-                },
-                "zoneStrategyID": {
-                    "type": "integer"
                 }
             }
         },
@@ -665,17 +733,11 @@ var doc = `{
                         "$ref": "#/definitions/types.Entry"
                     }
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "isBreakout": {
                     "type": "boolean"
                 },
                 "sl": {
                     "$ref": "#/definitions/types.SL"
-                },
-                "strategyID": {
-                    "type": "integer"
                 },
                 "tps": {
                     "type": "array",
@@ -705,17 +767,11 @@ var doc = `{
                 "entryStop": {
                     "type": "number"
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "isBreakout": {
                     "type": "boolean"
                 },
                 "sl": {
                     "$ref": "#/definitions/types.SL"
-                },
-                "strategyID": {
-                    "type": "integer"
                 },
                 "tps": {
                     "type": "array",
