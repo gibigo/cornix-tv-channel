@@ -11,6 +11,7 @@ type Strategy struct {
 	Symbol         string
 	TargetStrategy *TargetStrategy `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	ZoneStrategy   *ZoneStrategy   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Leverage       uint
 	ChannelID      uint
 }
 
