@@ -354,7 +354,7 @@ paths:
       tags:
       - strategies
   /channels/{channel_id}/strategies/{strategy_symbol}:
-    get:
+    delete:
       consumes:
       - application/json
       description: Delete a strategy for a particular symbol
@@ -388,7 +388,42 @@ paths:
       - BasicAuth: []
       summary: Delete a strategy
       tags:
-      - channels
+      - strategies
+    get:
+      consumes:
+      - application/json
+      description: Get a strategy by the channel id and the symbol
+      parameters:
+      - description: Channel ID
+        in: path
+        name: channel_id
+        required: true
+        type: integer
+      - description: Strategy Symbol, use 'all' for the default strategy
+        in: path
+        name: strategy_symbol
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/types.Strategy'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/utils.HTTPError'
+      security:
+      - BasicAuth: []
+      summary: Get a strategy
+      tags:
+      - strategies
   /users:
     delete:
       consumes:

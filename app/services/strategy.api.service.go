@@ -260,7 +260,7 @@ func GetStrategy(c *fiber.Ctx) error {
 // @Summary Delete a strategy
 // @Description Delete a strategy for a particular symbol
 // @Security BasicAuth
-// @Tags channels
+// @Tags strategies
 // @Accept  json
 // @Produce  json
 // @Success 204 {string} string
@@ -268,7 +268,7 @@ func GetStrategy(c *fiber.Ctx) error {
 // @Failure 404 {object} utils.HTTPError
 // @Param channel_id path int true "Channel ID"
 // @Param strategy_symbol path string true "Strategy Symbol, use 'all' for the default strategy"
-// @Router /channels/{channel_id}/strategies/{strategy_symbol} [get]
+// @Router /channels/{channel_id}/strategies/{strategy_symbol} [delete]
 func DeleteStrategy(c *fiber.Ctx) error {
 
 	// define logger for this function

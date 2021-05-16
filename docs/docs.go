@@ -387,6 +387,60 @@ var doc = `{
                         "BasicAuth": []
                     }
                 ],
+                "description": "Get a strategy by the channel id and the symbol",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "strategies"
+                ],
+                "summary": "Get a strategy",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Channel ID",
+                        "name": "channel_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Strategy Symbol, use 'all' for the default strategy",
+                        "name": "strategy_symbol",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/types.Strategy"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BasicAuth": []
+                    }
+                ],
                 "description": "Delete a strategy for a particular symbol",
                 "consumes": [
                     "application/json"
@@ -395,7 +449,7 @@ var doc = `{
                     "application/json"
                 ],
                 "tags": [
-                    "channels"
+                    "strategies"
                 ],
                 "summary": "Delete a strategy",
                 "parameters": [
