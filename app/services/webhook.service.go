@@ -184,7 +184,15 @@ func genEntry(price float64, direction string, strategy dal.Strategy) string {
 		}
 	} else if strategy.ZoneStrategy != nil {
 		if strategy.ZoneStrategy.IsBreakout {
-			// TODO add support for breakout
+			if strings.EqualFold(direction, "long") {
+				t1 := price + (price * (strategy.ZoneStrategy.EntryStart / 100))
+				t2 := price + (price * (strategy.ZoneStrategy.EntryStop / 100))
+				msg = fmt.Sprintf("\nEntry zone above %f-%f\n", t1, t2)
+			} else if strings.EqualFold(direction, "short") {
+				t1 := price - (price * (strategy.ZoneStrategy.EntryStart / 100))
+				t2 := price - (price * (strategy.ZoneStrategy.EntryStop / 100))
+				msg = fmt.Sprintf("\nEntry zone below %f-%f\n", t1, t2)
+			}
 		} else {
 			if strings.EqualFold(direction, "long") {
 				t1 := price + (price * (strategy.ZoneStrategy.EntryStart / 100))
