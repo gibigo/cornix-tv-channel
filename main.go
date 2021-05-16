@@ -5,6 +5,7 @@ import (
 
 	"github.com/gibigo/cornix-tv-channel/app/dal"
 	"github.com/gibigo/cornix-tv-channel/app/routes"
+	"github.com/gibigo/cornix-tv-channel/app/telegram/handler"
 	"github.com/gibigo/cornix-tv-channel/config"
 	"github.com/gibigo/cornix-tv-channel/config/database"
 	_ "github.com/gibigo/cornix-tv-channel/docs"
@@ -38,7 +39,9 @@ func main() {
 	database.Migrate(tables...)
 
 	// create the telegram bot
-	cfg.Telegram.NewBot()
+	bot := cfg.Telegram.NewBot()
+	// start the channel message handler (to delete closed trades from the database)
+	go handler.StartTGHandler(bot)
 
 	// lets fire up the API
 	app := fiber.New()
