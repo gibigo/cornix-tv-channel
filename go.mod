@@ -8,7 +8,7 @@ require (
 	github.com/arsmn/fiber-swagger/v2 v2.6.0
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/go-playground/validator/v10 v10.6.1
-	github.com/gofiber/fiber/v2 v2.9.0
+	github.com/gofiber/fiber/v2 v2.10.0
 	github.com/google/uuid v1.2.0
 	github.com/klauspost/compress v1.12.1 // indirect
 	github.com/sirupsen/logrus v1.8.1
