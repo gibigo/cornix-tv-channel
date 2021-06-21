@@ -12,11 +12,10 @@ require (
 	github.com/google/uuid v1.2.0
 	github.com/klauspost/compress v1.12.1 // indirect
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/viper v1.7.1
+	github.com/spf13/viper v1.8.0
 	github.com/swaggo/swag v1.7.0
 	golang.org/x/crypto v0.0.0-20210421170649-83a5a9bb288b
 	golang.org/x/net v0.0.0-20210423184538-5f58ad60dda6 // indirect
-	golang.org/x/sys v0.0.0-20210423185535-09eb48e85fd7 // indirect
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.21.9
 )
