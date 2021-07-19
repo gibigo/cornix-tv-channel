@@ -8,7 +8,7 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
-	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters"
+	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/message"
 	"github.com/gibigo/cornix-tv-channel/app/dal"
 	"github.com/gibigo/cornix-tv-channel/utils/logging"
 	log "github.com/sirupsen/logrus"
@@ -38,7 +38,7 @@ func StartTGHandler(b *gotgbot.Bot) {
 	updater := ext.NewUpdater(nil)
 	dispatcher := updater.Dispatcher
 
-	channelMessageHandler := handlers.NewMessage(filters.Text, handleChannelMessages)
+	channelMessageHandler := handlers.NewMessage(message.Text, handleChannelMessages)
 	channelMessageHandler.AllowChannel = true
 	dispatcher.AddHandler(channelMessageHandler)
 
