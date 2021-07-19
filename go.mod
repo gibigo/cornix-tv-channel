@@ -13,14 +13,10 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/viper v1.7.1
-	github.com/stretchr/testify v1.7.0 // indirect
+	github.com/spf13/viper v1.8.1
 	github.com/swaggo/swag v1.7.0
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
-	golang.org/x/mod v0.4.2 // indirect
-	golang.org/x/tools v0.1.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 	gorm.io/driver/sqlite v1.1.4
 	gorm.io/gorm v1.21.12
 )
