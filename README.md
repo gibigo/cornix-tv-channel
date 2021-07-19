@@ -147,3 +147,28 @@ and replace all values in "<>"
 
 ## 📜 Licensing
 This project is released under the GPLv3-License found in the [LICENSE](https://github.com/gibigo/cornix-tv-channel/blob/master/LICENSE) file.
+
+
+## 🤩 Contribute
+
+This is an open source project which welcomes any kind of contributions. 
+
+### Contributors 
+
+[![Contributors](https://contributors-img.web.app/image?repo=gibigo/cornix-tv-channel)](https://github.com/gibigo/cornix-tv-channel/graphs/contributors)
+
+## 🤑 Donate
+
+Feel free to support my development if you like it.
+
+### Crypto
+
+```
+XMR: 82jT8bSjxpdQAJoDBv2ChA97FzwgvH9e7PrmukiroxrDduxkCJpoWNSJqAjZ7S4jJ1aFzHxnud4xYb3peNq6qLwo4irT7mv
+```
+
+***
+
+<p align="center">
+<a href="https://www.buymeacoffee.com/jon4hz" target="_blank"><img src="https://raw.githubusercontent.com/gibigo/cornix-tv-channel/master/assets/bmac.png" alt="Buy Me A Coffee" width=200px ></a>
+</p>
