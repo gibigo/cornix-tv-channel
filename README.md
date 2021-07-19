@@ -67,7 +67,7 @@ Every github release has binaries attached for the following operating systems:
 To run ctvc as a binary follow those steps:
 1. Download the [release](https://github.com/gibigo/cornix-tv-channel/releases) for your system and unzip the executable
 2. Place it in a folder where you can run it. A subfolder is created for the database
-3. Set either the required [enviroinment variables](https://github.com/gibigo/cornix-tv-channel/tree/master#-environment-variables) or write a [config file](https://github.com/gibigo/cornix-tv-channel/tree/master#-config-file)
+3. Set either the required [enviroinment variables](https://github.com/gibigo/cornix-tv-channel#-environment-variables) or write a [config file](https://github.com/gibigo/cornix-tv-channel#-config-file)
 4. Run the executable
 
 ### 👩‍💻 Build locally 
@@ -84,7 +84,7 @@ As a prerequisite, please configure your go development environment and enable g
 `go mod download`
 4. Build the binary  
 `go build .`
-5. Set either the required [enviroinment variables](https://github.com/gibigo/cornix-tv-channel/tree/master#-environment-variables) or write a [config file](https://github.com/gibigo/cornix-tv-channel/tree/master#-config-file)
+5. Set either the required [enviroinment variables](https://github.com/gibigo/cornix-tv-channel#-environment-variables) or write a [config file](https://github.com/gibigo/cornix-tv-channel#-config-file)
 6. Run the binary  
 `./cornix-tv-channel`
 
