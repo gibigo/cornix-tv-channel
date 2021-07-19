@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"os"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -11,6 +12,15 @@ import (
 var (
 	DB *gorm.DB
 )
+
+func init() {
+	// ensure folder ./data exists and if not create it
+	if _, err := os.Stat("./data"); os.IsNotExist(err) {
+		if err := os.Mkdir("./data", 0755); err != nil {
+			panic(fmt.Sprintf("[database][init] error: %s", err))
+		}
+	}
+}
 
 type Config struct {
 	Debug bool `mapstructure:"debug"`
