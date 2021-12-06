@@ -9,10 +9,4 @@ services:
         volumes:
             - ./data:/data
         env_file:
-            - .env 
-        networks: 
-            traefik_proxy:
-
-networks:
-    traefik_proxy:
-        external: true
+            - .env
