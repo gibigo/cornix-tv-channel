@@ -4,12 +4,12 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gibigo/cornix-tv-channel/app/dal"
-	"github.com/gibigo/cornix-tv-channel/app/types"
-	"github.com/gibigo/cornix-tv-channel/config"
-	"github.com/gibigo/cornix-tv-channel/utils"
-	"github.com/gibigo/cornix-tv-channel/utils/logging"
-	"github.com/gibigo/cornix-tv-channel/utils/password"
+	"github.com/gibigo/cornix-tv-channel/internal/api/dal"
+	"github.com/gibigo/cornix-tv-channel/internal/api/types"
+	"github.com/gibigo/cornix-tv-channel/internal/config"
+	"github.com/gibigo/cornix-tv-channel/internal/utils"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/logging"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/password"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
@@ -28,7 +28,6 @@ import (
 // @Failure 501 {object} utils.HTTPError "if user registration is disabled on the server"
 // @Router /users [post]
 func CreateUser(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "CreateUser",
@@ -89,7 +88,6 @@ func CreateUser(c *fiber.Ctx) error {
 // @Failure 401 {string} string
 // @Router /users [get]
 func GetUser(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "GetUser",
@@ -116,7 +114,6 @@ func GetUser(c *fiber.Ctx) error {
 // @Failure 401 {string} string
 // @Router /users [delete]
 func DeleteUser(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "DeleteUser",
@@ -146,7 +143,6 @@ func DeleteUser(c *fiber.Ctx) error {
 // @Failure 401 {string} string
 // @Router /users [put]
 func UpdateUser(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "UpdateUser",
@@ -214,5 +210,4 @@ func UpdateUser(c *fiber.Ctx) error {
 	}
 	c.Status(fiber.StatusNoContent)
 	return nil
-
 }

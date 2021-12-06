@@ -1,8 +1,8 @@
 package dal
 
 import (
-	"github.com/gibigo/cornix-tv-channel/config/database"
-	"github.com/gibigo/cornix-tv-channel/utils/password"
+	"github.com/gibigo/cornix-tv-channel/internal/config/database"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/password"
 	"gorm.io/gorm"
 )
 

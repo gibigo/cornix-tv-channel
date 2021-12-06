@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gibigo/cornix-tv-channel/app/dal"
-	"github.com/gibigo/cornix-tv-channel/app/telegram"
-	"github.com/gibigo/cornix-tv-channel/app/types"
-	"github.com/gibigo/cornix-tv-channel/utils"
-	"github.com/gibigo/cornix-tv-channel/utils/logging"
+	"github.com/gibigo/cornix-tv-channel/internal/api/dal"
+	"github.com/gibigo/cornix-tv-channel/internal/api/types"
+	"github.com/gibigo/cornix-tv-channel/internal/telegram"
+	"github.com/gibigo/cornix-tv-channel/internal/utils"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/logging"
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -18,7 +18,6 @@ import (
 // TODO add swagger docs
 
 func TriggerWebhook(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "TriggerWebhook",
@@ -155,7 +154,6 @@ func genSignalForDatabase(s types.TVSignal, c dal.Channel) *dal.TVSignal {
 
 // WIP
 func genSignalForTelegram(s types.TVSignal, strategy dal.Strategy) string {
-
 	msg := fmt.Sprintf("⚡️⚡️ %s ⚡️⚡️\nExchange: %s\nDirection: %s\n", s.Symbol, s.Exchange, s.Direction)
 	if strategy.Leverage != 0 {
 		msg += fmt.Sprintf("Leverage: %dx\n", strategy.Leverage)

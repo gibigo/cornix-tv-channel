@@ -3,18 +3,17 @@ package main
 import (
 	"os"
 
-	"github.com/gibigo/cornix-tv-channel/app/dal"
-	"github.com/gibigo/cornix-tv-channel/app/routes"
-	"github.com/gibigo/cornix-tv-channel/app/telegram/handler"
-	"github.com/gibigo/cornix-tv-channel/config"
-	"github.com/gibigo/cornix-tv-channel/config/database"
 	_ "github.com/gibigo/cornix-tv-channel/docs"
-	"github.com/gibigo/cornix-tv-channel/utils/logging"
+	"github.com/gibigo/cornix-tv-channel/internal/api/dal"
+	"github.com/gibigo/cornix-tv-channel/internal/api/routes"
+	"github.com/gibigo/cornix-tv-channel/internal/config"
+	"github.com/gibigo/cornix-tv-channel/internal/config/database"
+	"github.com/gibigo/cornix-tv-channel/internal/telegram/handler"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/logging"
 	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
-
 	// load the configuration
 	cfg := loadConfiguration()
 

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/gibigo/cornix-tv-channel/app/dal"
-	"github.com/gibigo/cornix-tv-channel/utils/password"
+	"github.com/gibigo/cornix-tv-channel/internal/api/dal"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/password"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"gorm.io/gorm"
 )

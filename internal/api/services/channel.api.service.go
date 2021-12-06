@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/gibigo/cornix-tv-channel/app/dal"
-	"github.com/gibigo/cornix-tv-channel/app/types"
-	"github.com/gibigo/cornix-tv-channel/utils"
-	"github.com/gibigo/cornix-tv-channel/utils/logging"
+	"github.com/gibigo/cornix-tv-channel/internal/api/dal"
+	"github.com/gibigo/cornix-tv-channel/internal/api/types"
+	"github.com/gibigo/cornix-tv-channel/internal/utils"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/logging"
+
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -25,7 +26,6 @@ import (
 // @Failure 409 {object} utils.HTTPError
 // @Router /channels [post]
 func CreateChannel(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "CreateChannel",
@@ -91,7 +91,6 @@ func CreateChannel(c *fiber.Ctx) error {
 // @Failure 404 {object} utils.HTTPError
 // @Router /channels [get]
 func GetChannels(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "GetChannels",
@@ -126,7 +125,6 @@ func GetChannels(c *fiber.Ctx) error {
 // @Param channel_id path int true "Channel ID"
 // @Router /channels/{channel_id} [get]
 func GetChannel(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "GetChannel",
@@ -161,7 +159,6 @@ func GetChannel(c *fiber.Ctx) error {
 // @Param channel_id path int true "Channel ID"
 // @Router /channels/{channel_id} [delete]
 func DeleteChannel(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "DeleteChannel",
@@ -206,7 +203,6 @@ func DeleteChannel(c *fiber.Ctx) error {
 // @Param channel body types.UpdateChannel true "Channel to create"
 // @Router /channels/{channel_id} [put]
 func UpdateChannel(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "UpdateChannel",

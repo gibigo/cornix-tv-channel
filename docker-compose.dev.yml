@@ -4,7 +4,7 @@ services:
     cornix-tv-channel:
         build: 
             context: .
-            dockerfile: Dockerfile.dev
+            dockerfile: Dockerfile
         restart: unless-stopped
         hostname: cornix-tv-channel
         container_name: cornix-tv-channel

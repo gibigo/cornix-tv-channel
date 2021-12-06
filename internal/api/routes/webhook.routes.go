@@ -1,7 +1,7 @@
 package routes
 
 import (
-	s "github.com/gibigo/cornix-tv-channel/app/services"
+	s "github.com/gibigo/cornix-tv-channel/internal/api/services"
 	"github.com/gofiber/fiber/v2"
 )
 

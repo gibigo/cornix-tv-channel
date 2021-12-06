@@ -9,8 +9,8 @@ import (
 	"github.com/PaulSonOfLars/gotgbot/v2/ext"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers"
 	"github.com/PaulSonOfLars/gotgbot/v2/ext/handlers/filters/message"
-	"github.com/gibigo/cornix-tv-channel/app/dal"
-	"github.com/gibigo/cornix-tv-channel/utils/logging"
+	"github.com/gibigo/cornix-tv-channel/internal/api/dal"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/logging"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -25,7 +25,6 @@ var (
 )
 
 func StartTGHandler(b *gotgbot.Bot) {
-
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "StartTGHandler",
 		"package":  "handler",
@@ -52,7 +51,6 @@ func StartTGHandler(b *gotgbot.Bot) {
 }
 
 func handleChannelMessages(b *gotgbot.Bot, ctx *ext.Context) error {
-
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "StartTGHandler",
 		"package":  "handler",

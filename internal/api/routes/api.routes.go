@@ -1,8 +1,8 @@
 package routes
 
 import (
-	s "github.com/gibigo/cornix-tv-channel/app/services"
-	"github.com/gibigo/cornix-tv-channel/utils/middleware"
+	s "github.com/gibigo/cornix-tv-channel/internal/api/services"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/middleware"
 	"github.com/gofiber/fiber/v2"
 )
 

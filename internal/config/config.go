@@ -8,9 +8,9 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/gibigo/cornix-tv-channel/app/telegram"
-	"github.com/gibigo/cornix-tv-channel/config/database"
-	"github.com/gibigo/cornix-tv-channel/utils/logging"
+	"github.com/gibigo/cornix-tv-channel/internal/config/database"
+	"github.com/gibigo/cornix-tv-channel/internal/telegram"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/logging"
 	"github.com/spf13/viper"
 )
 
@@ -47,7 +47,6 @@ func Load(configFile string) error {
 }
 
 func readConfiguration(fileName string) (config *Config, err error) {
-
 	viper.SetConfigType("yaml")
 
 	// check if file exists

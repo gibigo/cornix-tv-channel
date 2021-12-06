@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/gibigo/cornix-tv-channel/app/dal"
-	"github.com/gibigo/cornix-tv-channel/app/types"
-	"github.com/gibigo/cornix-tv-channel/utils"
-	"github.com/gibigo/cornix-tv-channel/utils/logging"
+	"github.com/gibigo/cornix-tv-channel/internal/api/dal"
+	"github.com/gibigo/cornix-tv-channel/internal/api/types"
+	"github.com/gibigo/cornix-tv-channel/internal/utils"
+	"github.com/gibigo/cornix-tv-channel/internal/utils/logging"
 	"github.com/gofiber/fiber/v2"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -27,7 +27,6 @@ import (
 // @Failure 401 {string} string
 // @Router /channels/{channel_id}/strategies [post]
 func CreateStrategy(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "CreateStrategy",
@@ -176,7 +175,6 @@ func convertStrategyStruct(strategy types.AddStrategy, channel uint) *dal.Strate
 // @Failure 404 {object} utils.HTTPError
 // @Router /channels/{channel_id}/strategies [get]
 func GetStrategies(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "GetStrategies",
@@ -223,7 +221,6 @@ func GetStrategies(c *fiber.Ctx) error {
 // @Failure 404 {object} utils.HTTPError
 // @Router /channels/{channel_id}/strategies/{strategy_symbol} [get]
 func GetStrategy(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "GetStrategy",
@@ -270,7 +267,6 @@ func GetStrategy(c *fiber.Ctx) error {
 // @Param strategy_symbol path string true "Strategy Symbol, use 'all' for the default strategy"
 // @Router /channels/{channel_id}/strategies/{strategy_symbol} [delete]
 func DeleteStrategy(c *fiber.Ctx) error {
-
 	// define logger for this function
 	logger := logging.Log.WithFields(log.Fields{
 		"function": "DeleteStrategy",

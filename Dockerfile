@@ -1,9 +1,11 @@
 FROM golang:alpine as builder
-RUN mkdir /app 
-ADD . /app/
 WORKDIR /app 
 # add build dependencies
-RUN apk add --no-cache gcc musl-dev upx
+RUN apk add gcc musl-dev upx
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . /app/
 # build the binary
 RUN go build -o cornix-tv-channel -ldflags="-s" .
 # compress the binary
