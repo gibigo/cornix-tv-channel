@@ -12,9 +12,9 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/viper v1.9.0
+	github.com/spf13/viper v1.11.0
 	github.com/swaggo/swag v1.7.6
-	golang.org/x/crypto v0.0.0-20211202192323-5770296d904e
+	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 	gorm.io/driver/sqlite v1.2.6
 	gorm.io/gorm v1.22.4
 )
